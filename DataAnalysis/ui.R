@@ -17,7 +17,7 @@ shinyUI(pageWithSidebar(
     helpText("Select price type above"),
     tags$hr(), 
     helpText("Select the time period:"),
-    dateInput("start_date", "Start Date:", value = "2013-05-15"),    
+    dateInput("start_date", "Start Date:", value = "2013-06-15"),    
     dateInput("end_date", "End Date:", value = "2014-06-15"),
     helpText("Note: please keep Start date at least 30 days earlier than End date"),
     tags$hr(), 
