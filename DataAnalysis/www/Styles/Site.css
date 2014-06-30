@@ -1,0 +1,42 @@
+﻿body
+{
+}
+#mainP
+{
+    width: 650px;
+    height: 400px;
+    position: static;
+    float: right;
+    background-color: #FFFFFF;
+    
+}
+ #menu-table
+ { width: 50%;
+ }
+ #back-page
+{
+    padding: 0px;
+    margin: 0px auto 0px auto;
+    width: 750px;
+    background-color: "#CCCCCC";
+    flex-flow: row wrap;
+    align-content: space-around; 
+}
+ .emailme
+ {float: right; 
+  width: auto;
+     }
+     
+.menu
+{
+    height: 75px;
+    background-image: url('Flag.png');
+   border-radius:10px 0px 20px 0px
+}
+
+#footer
+{
+    margin: 10px;
+    padding: 10px;
+    clear: both
+}     
