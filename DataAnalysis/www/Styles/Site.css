@@ -11,10 +11,17 @@
     height: 120px;
     background-color: #FFFFFF;    
     border-bottom-style: solid;
-    border-bottom-width: 2px;
+    border-bottom-width: 0px;
     border-bottom-color: #666666;
 }
 #mainP
+{
+    width: 900px;
+    border-radius: 10px 10px 10px 10px;
+    background-color: #FFFFFF;
+    
+}
+#mainP_cv
 {
     width: 900px;
     border-radius: 10px 10px 10px 10px;
