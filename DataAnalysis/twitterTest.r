@@ -46,4 +46,18 @@ sources<-sapply(sources,function(x)ifelse(length(x)>1,x[2],x[1]))
 source_table=table(sources)
 pie(source_table[source_table>10])
 
-For this we need a list of words that contains positive and negative sentiment words. I have downloaded the list from Google and it is easily available.
+
+##----------------------------
+delta.tweets<- searchTwitter("@delta",n=100)
+df<-twListToDF(delta.tweets)
+delta.text<-df$text;
+
+hu.liu.pos<-scan("positive-words.txt", what="character", comment.char=";")
+hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
+
+until_day<-as.character(Sys.Date()-1)
+a<-twListToDF(searchTwitter('NQ', n=100000,since='2011-03-01', until=until_day,lang="en"))
+nrow(a)
+min(as.Date(a[,5]))
+plot(a[,5])
+hist(a[,5],breaks=20)
