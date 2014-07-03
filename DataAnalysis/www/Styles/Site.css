@@ -29,22 +29,26 @@
     background-color: #FFFFFF;
     
 }
- #menu-table
+ .menu_table
 {
-    width: 400px;
+    width: 450px;
     font-family: 'Comic Sans MS';
     font-weight: bold;
     text-align: center;
+    color: #FFFFFF;
 }
+
  #page
 {
     
     margin: 0px auto 0px auto;
 }
  .emailme
- {float: right; 
-  width: auto;
-     }
+{
+    float: right;
+    width: auto;
+ 
+}
      
 #header
 {
