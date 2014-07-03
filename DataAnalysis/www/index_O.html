@@ -1,0 +1,92 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title> Jerry Peng's homepage</title>
+  <link href="Styles/Site.css" rel="stylesheet" type="text/css" />   
+  <script src="shared/jquery.js" type="text/javascript"></script>
+  <script src="shared/shiny.js" type="text/javascript"></script> 
+  <script>
+      !function (d, s, id) 
+         {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (!d.getElementById(id)) {
+                js = d.createElement(s); js.id = id;
+                js.src = "https://platform.twitter.com/widgets.js";
+                fjs.parentNode.insertBefore(js, fjs);
+                }
+        } (document, "script", "twitter-wjs");
+ </script>
+</head>
+<body style="background-color: #D7D7D7">  
+<div id="page">
+    <div id="header">
+            <div class="emailme" style="margin-right: 25px; margin-top: 10px;">            
+		        <a href="emailme.html" style="font-weight: bold; color: #FFFFFF;
+                    font-family: 'Comic Sans MS';">Email me</a>                     
+            </div>
+            <div style="width: 100px; float: right; clear: both; margin-top: 10px;">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+            </div>            
+    </div>
+    <div class="top1" >
+        <div id="name" style="width: 500px; float: left; padding-left: 10px;">
+            <h1 style="font-family: 'Comic Sans MS'; font-weight: bold">Zhiqiang (Jerry) Peng</h1>
+            <div id="menu" style="float: left;">
+           <table align="center" id="menu-table">
+                <tr>
+                    <td>
+                        <a href="https://www.linkedin.com/profile/view?id=64823014&trk=nav_responsive_tab_profile"><img src="link_logo.png"></a></td>
+                    <td>
+                        <a href="https://github.com/zpeng-projects?tab=repositories"><img src="git_logo.png"></a></td>
+                    <td>
+                        <a href="projects.html">Projects</td>
+                    <td>
+                        <a href="certificate.html">Certificate</td>
+                    <td>
+                        <a href="index.html">Resume</td>
+                </tr>
+            </table>            
+        </div>
+    </div>	
+        <div id="side-bar" 
+            style="margin: 20px 10px 10px 10px; width:100px; float:right;">
+            <img alt="" src="pengLog_A.jpg" />              
+		</div>   
+    </div>  
+    <div id="mainP" >
+	    <div style="border-top-style: ridge; border-top-width: 2px; border-color: #336699; padding-left: 30px">
+			<h2> Welcome to my website. </h2>
+            <p>You </p>
+		</div>	
+        <div>
+            <p>
+                <label>Distribution type:</label>
+                <br />
+                <select name="dist">
+                     <option value="norm">Normal</option>
+                     <option value="unif">Uniform</option>
+                     <option value="lnorm">Log-normal</option>
+                     <option value="exp">Exponential</option>
+                 </select> 
+            </p>
+            <p>
+                <label>Number of observations:</label><br /> 
+                <input type="number" name="n" value="500" min="1" max="1000" />
+            </p>
+            <pre id="summary" class="shiny-text-output">  	
+            </pre>   
+            <div id="plot" class="shiny-plot-output" 
+             style="width: 50%; height: 400px">
+        </div> 
+            <div id="table" class="shiny-html-output">  	
+        </div>
+  </div>	
+    </div>   
+    <div id="footer">
+       <h5>Email: jerry.peng2013@hotmail.com &nbsp &nbsp &nbsp &nbsp Phone: 949-232-9346</h5>
+    </div>       
+</div>	
+</body>
+</html>
