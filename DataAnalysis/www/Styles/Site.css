@@ -4,7 +4,51 @@
     width: 100%;
     background-color: #FFFFFF;
 }
+.myButton
+{
+    padding: 5px;
+    font-family: 'Comic Sans MS';
+    font-weight: bold;
+    color: #FFFFFF;
+    background-color: green;
+    border-style: solid;
+    border-color: #006600;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    }
+.myButton:hover
+{
+    background-color: #006600;
+}
 
+
+table#course 
+{
+    border: 1px solid green;
+    border-collapse: collapse;
+} 
+#course td
+{
+    height: 35px;
+    vertical-align: middle;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: #008000;
+    padding-left: 40px;
+}
+#course th
+{
+    height: 40px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: #008000;
+    background-color: green;
+    color: #FFFFFF;
+}
 
 .top1
 {
@@ -31,7 +75,7 @@
 }
  .menu_table
 {
-    width: 450px;
+    width: 500px;
     font-family: 'Comic Sans MS';
     font-weight: bold;
     text-align: center;

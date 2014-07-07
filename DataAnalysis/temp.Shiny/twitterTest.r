@@ -18,7 +18,7 @@ access_token_secret <- "GSdNj3Clasqm4Ub5Nl647y8cuafphvPi5NpcHkdasFk0p"
 setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
 searchTwitter("iphone")
 
-tweets<-searchTwitter("#rstats",n=50)
+tweets<-searchTwitter("#rstats",n=2)
 head(strip_retweets(tweets,strip_manual=TRUE,strip_mt=TRUE))
 
 crantastic<-getUser("crantastic")
@@ -51,7 +51,88 @@ pie(source_table[source_table>10])
 #For this we need a list of words that contains positive and 
 #negative sentiment words. I have downloaded the list from Google 
 #and it is easily available.
-txt<- VectorSource(text.d)
+library(tm)
+
+tweets<-searchTwitter("iphone", n=100,lang="en")
+tw_df<-do.call("rbind", lapply(tweets, as.data.frame))
+f<-function(x) {
+  dat2 <- unlist(strsplit(x, split=" "))
+  dat3 <- grepl("dat2", iconv(dat2, "latin1", "ASCII", sub="dat2"))
+ dat4 <- dat2[!dat3]
+ dat5 <- paste(dat4, collapse = " ")
+}
+tw_df$text<-sapply(tw_df$text,f)
+myCorpus <- Corpus(VectorSource(tw_df$text))
+
+myCorpus <- tm_map(myCorpus, removePunctuation)
+myCorpus <- tm_map(myCorpus, removeNumbers)
+myCorpus <- tm_map(myCorpus, tolower)
+myStopwords <- c(stopwords('english'))
+myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
+dictCorpus <- myCorpus
+library(SnowballC) 
+# which requires packages Snowball, RWeka, rJava, RWekajars
+myCorpus <- tm_map(myCorpus, stemDocument)
+# inspect the first three ``documents"
+inspect(myCorpus[1:3])
+
+myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)
+inspect(myCorpus[1:3])
+myCorpus<-tm_map(myCorpus, stripWhitespace)
+inspect(myCorpus[1:3])
+hu.liu.pos<-scan("positive-words.txt", what="character", comment.char=";")
+hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
+
+sp<-function(x) x %in% hu.liu.pos
+sn<-function(x) x %in% hu.liu.pos
+
+
+pos<-sapply(myCorpus,function(x) strsplit(x," "))
+pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
+neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
+sen<-pos1-neg1
+movea<-100;
+for(i in seq(1000-movea))
+{
+  ax[i]<-sum(sen[i:(i+movea)])
+}
+
+plot(ax,type="l")
+ax[1]
+sen[1:5]
+plot(sen,type="l")
+
+
+
+myDtm <- TermDocumentMatrix(myCorpus, control = list(minWordLength = 1))
+inspect(myDtm[266:270,31:40])
+findFreqTerms(myDtm, lowfreq=10)
+findAssocs(myDtm, 'r', 0.30)
+
+library(wordcloud)
+m <- as.matrix(myDtm)
+v <- sort(rowSums(m), decreasing=TRUE)
+myNames <- names(v)
+k <- which(names(v)=="miners")
+myNames[k] <- "mining"
+ d <- data.frame(word=myNames, freq=v)
+wordcloud(d$word, d$freq, min.freq=3)
+
+
+> # stem completion
+  > myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)
+
+
+
+
+b<-a[[1]][1]
+c<-VectorSource(b)
+c$Content
+b
+txt<- lapply(a$text,VectorSource)
+b<-do.call(rbind,txt)
+c<-data.frame(txt,b$Content)
+
 txt.corpus<-Corpus(txt)
 inspect(txt.corpus)
 txt.corpus<-tm_map(txt.corpus,tolower)
@@ -112,9 +193,14 @@ hu.liu.pos<-scan("positive-words.txt", what="character", comment.char=";")
 hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
 
 until_day<-as.character(Sys.Date()-1)
-a<-twListToDF(searchTwitter('NQ', n=100000,since='2011-03-01', until=until_day,lang="en"))
+a<-twListToDF(searchTwitter('NQ', n=10,since='2011-03-01', until=until_day,lang="en"))
+f<-function(x) {c(x$text,x$created)}
+g<-lapply(a,f)
+h<-do.call(rbind,g)
+h
+
 nrow(a)
 min(as.Date(a[,5]))
 plot(a[,5])
 hist(a[,5],breaks=20)
->>>>>>> b6cb7b81543e9b245698158f70b8c62b6df5f25e
+
