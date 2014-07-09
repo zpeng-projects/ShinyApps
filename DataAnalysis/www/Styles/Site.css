@@ -2,8 +2,19 @@
 {
     margin: 0px;
     width: 100%;
+    height: 100%;
     background-color: #FFFFFF;
 }
+.footer {
+    position: relative;
+        clear: both;
+       padding: 0px; 
+       margin: 0px; 
+       height: 50px; width: 100%; background-color:#CCCCCC;
+       top: 50px;
+       
+}
+
 .myButton
 {
     padding: 5px;
@@ -23,6 +34,23 @@
     background-color: #006600;
 }
 
+.submit1
+{
+    padding: 5px;
+    font-weight: bold;
+    color: #FFFFFF;
+    background-color: green;
+    border-style: solid;
+    border-color: #006600;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.submit1:hover
+{
+    background-color: #006600;
+}
 
 table#course 
 {

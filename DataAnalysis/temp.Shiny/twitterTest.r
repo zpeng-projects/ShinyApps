@@ -53,7 +53,7 @@ pie(source_table[source_table>10])
 #and it is easily available.
 library(tm)
 
-tweets<-searchTwitter("iphone", n=100,lang="en")
+tweets<-searchTwitter("iphone", n=500,lang="en")
 tw_df<-do.call("rbind", lapply(tweets, as.data.frame))
 f<-function(x) {
   dat2 <- unlist(strsplit(x, split=" "))
