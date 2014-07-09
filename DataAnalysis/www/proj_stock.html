@@ -44,7 +44,7 @@
         </td>
     </tr>
     <tr align="center" valign="top" 
-        style="border-top-style: groove; border-top-width: medium; border-color: #0000FF" bgcolor="ButtonFace">
+        style="border-top-style: groove; border-top-width: medium; border-color: #0000FF">
         <td style="width: 28%" >            
         <p><B>Prediction of Up/Down of the stock price: </B> </p>
         <hr />
@@ -62,8 +62,29 @@
         </form> 
         </p>
         </td>
-        <td style="width: 70%" >            
-        <div id="table1" class="shiny-html-output"></div> 
+        <td style="width: 70%" >  
+        <p>
+        <label>Training / Testing</label><br />
+        <input type="number" name="sampleR" value="0.7"/>
+        </p>
+        <p>
+        <label>select model:</label><br /> 
+        <select name="model">
+            <option value="random">random - baseline</option>
+            <option value="logireg">Logistic regression</option>  
+            <option value="lda">Linear Discriminant Analysis(LDA)</option>
+            <option value="qda">Quadratic Discriminant Analysis(QDA)</option>
+            <option value="knn">K-Nearest Neighbors (KNN) </option>
+            <option value="tree">Clasification Tree (CART) </option>    
+            <option value="rf">Random Forest </option>  
+            <option value="svm">SVM</option>                  
+        </select> 
+        <div id="testControls" class="shiny-html-output"></div></p> 
+        </p> 
+        <p>confusion matrix: traing performance          
+        <div id="table1" class="shiny-html-output">training</div></p>
+        <p>confusion matrix: model validation 
+        <div id="table2" class="shiny-html-output">validate</div></p>        
         </td>
         
     </tr>
