@@ -39,15 +39,15 @@ shinyServer(function(input, output) {
     tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
     if (nrow(tw_df)>{input$tw_number}) tw_df<-tw_df[1:{input$tw_number},]
     myCorpus <- Corpus(VectorSource(tw_df$text))    
-    myCorpus <- tm_map(myCorpus, removePunctuation)
-    myCorpus <- tm_map(myCorpus, removeNumbers)
-    myCorpus <- tm_map(myCorpus, tolower)
-    myStopwords <- c(stopwords('english'))
-    myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
-    dictCorpus <- myCorpus    
-    myCorpus <- tm_map(myCorpus, stemDocument)
-    myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
-    myCorpus<-tm_map(myCorpus, stripWhitespace)   
+#     myCorpus <- tm_map(myCorpus, removePunctuation)
+#     myCorpus <- tm_map(myCorpus, removeNumbers)
+#     myCorpus <- tm_map(myCorpus, tolower)
+#     myStopwords <- c(stopwords('english'))
+#     myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
+#     dictCorpus <- myCorpus    
+#     myCorpus <- tm_map(myCorpus, stemDocument)
+#     myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
+#     myCorpus<-tm_map(myCorpus, stripWhitespace)   
     pos<-sapply(myCorpus,function(x) strsplit(x," "))
     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
     neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
