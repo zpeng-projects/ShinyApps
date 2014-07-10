@@ -38,7 +38,12 @@ shinyServer(function(input, output) {
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
     tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
     if(nrow(tw_df)>{input$tw_number}) {tw_df<-tw_df[1:{input$tw_number},]}
-    myCorpus <- Corpus(VectorSource(tw_df$text))    
+    tlist<-tolower(tw_df$text)
+    tlist<-gsub("[[:punct:]]", "", tlist)
+    tlist<-gsub("[[:digit:]]", "", tlist)
+    tlist<-gsub("[[:space:]]", " ", tlist)
+    a<-stopwords("en")
+    #myCorpus <- Corpus(VectorSource(tw_df$text))    
 #     myCorpus <- tm_map(myCorpus, removePunctuation)
 #     myCorpus <- tm_map(myCorpus, removeNumbers)
 #     myCorpus <- tm_map(myCorpus, tolower)
@@ -112,7 +117,7 @@ shinyServer(function(input, output) {
 
    output$testtemp<- renderText({
      a<-prep_data()
-     a[[1]]
+     a
    })
 
 
