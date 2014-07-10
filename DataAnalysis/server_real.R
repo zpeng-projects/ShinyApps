@@ -69,52 +69,9 @@ shinyServer(function(input, output) {
   
   
   
-  prep_data <- reactive({ 
-    tw_df<-data()
-    raw_tweet<-tw_df$text
-    tw_df$text<-sapply(tw_df$text,func_removeNonAscii)
-    tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
-   if (nrow(tw_df)>{input$tw_number}) tw_df<-tw_df[1:{input$tw_number},]
-    myCorpus <- Corpus(VectorSource(tw_df$text))    
-    myCorpus <- tm_map(myCorpus, removePunctuation)
-    myCorpus <- tm_map(myCorpus, removeNumbers)
-    myCorpus <- tm_map(myCorpus, tolower)
-    myStopwords <- c(stopwords('english'))
-    myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
-    dictCorpus <- myCorpus    
-    myCorpus <- tm_map(myCorpus, stemDocument)
-    myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
-    myCorpus<-tm_map(myCorpus, stripWhitespace)   
-    pos<-sapply(myCorpus,function(x) strsplit(x," "))
-    pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
-    neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
-    sen<-pos1-neg1
-    outP<-list(sen,myCorpus,tw_df)
-  })
+  
     
-  process_data <- reactive({
-    a<-prep_data() 
-    sen<-a[[1]]   
-    len<-length(sen)    
-    ind_order_asc<-order(sen)
-    
-    if ({input$dat_order}=="desc")
-    {ord<-ind_order_asc[len:{len+1-{input$tw_Read}}]}
-    else if ({input$dat_order}=="asc") 
-    {ord<-ind_order_asc[1:{input$tw_Read}]}
-    else if ({input$dat_order}=="time")
-    {ord<-1:{input$tw_Read}}  
-    
-    m<-floor(len/20)
-    ax<-rep(0,len)
-     for(i in seq_len(len))
-     {
-       lo<-ifelse(i<=m,1,i-m)
-       hi<-ifelse(i>=(len-m),len,i+m)
-       ax[i]<-mean(sen[lo:hi])
-     } 
-     b<-list(ax,sen,ord,a[[2]],a[[3]])
-  })
+  
   
   output$plot1 <- renderPlot({
     a<-stock_dat()
@@ -124,29 +81,7 @@ shinyServer(function(input, output) {
     addBBands()
   })    
   
-  output$plot <- renderPlot({ 
-    dat<-process_data()
-    tmp<-as.numeric(dat[[5]]$created)
-    len<-nrow(dat[[5]])
-    timeP<-tmp-tmp[len]
-    unit<-"second"
-    if (timeP[1]>500) {
-      timeP<-timeP/60
-      unit<-"min"
-    } 
-    if (timeP[1]>500) {
-      timeP<-timeP/60
-      unit<-"hour"
-    } 
-    if (timeP[1]>200) {
-      timeP<-timeP/24
-      unit<-"day"
-    } 
-    plot(timeP,dat[[1]],type="l",col="red",ylab="Sentiment",xlab=paste("time in ",unit)) 
-    title(paste("time series of sentiment for \"", 
-                {input$tw_query},"\"", "\n total", len, "tweets retrieved in",timeP[1],unit))
-      
-  })
+  
   
   model_do<-reactive({
       
@@ -299,10 +234,5 @@ shinyServer(function(input, output) {
         dat
   })
 
-  output$table <- renderTable({
-     dat<-process_data()  
-     ord<-dat[[3]]
-     tw<-dat[[5]][ord,1]
-     c<-data.frame(tw)
- })
+  
 })
