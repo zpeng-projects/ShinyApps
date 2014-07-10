@@ -50,7 +50,7 @@ shinyServer(function(input, output) {
     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
     neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
     sen<-pos1-neg1
-    outP<-list(sen,myCorpus,tw_df)
+    #outP<-list(sen,myCorpus,tw_df)
   })
   
   process_data <- reactive({
@@ -108,8 +108,8 @@ shinyServer(function(input, output) {
   c<-data.frame(tw)    
 })
 
-   output$testtemp<- renderTable({
-     a<-data()
+   output$testtemp<- renderText({
+     a<-prep_data()
      a
    })
 
