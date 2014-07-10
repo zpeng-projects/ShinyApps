@@ -1,8 +1,11 @@
 library(shiny)
+library(twitteR)
 library(quantmod)
 library(TTR)
 library(MASS)
 library(class)
+library(tm)
+library(SnowballC) 
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
 access_token <- "2534082073-qlC6nlEgvmHb1zzJCqDhZhtIqIAYgZZBDJcOVra"
@@ -21,17 +24,13 @@ hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
 shinyServer(function(input, output) {
   
   # twitter functions
-  data <- reactive({  
-    library(twitteR)
+  data <- reactive({      
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
-    #detach(twitteR)
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
   })
   
   prep_data <- reactive({ 
-    library(tm)
-    library(SnowballC) 
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)
@@ -67,7 +66,7 @@ shinyServer(function(input, output) {
     else if ({input$dat_order}=="time")
     {ord<-1:{input$tw_Read}}  
     
-    m<-floor(len/20)
+    m<-floor(len/10)
     ax<-rep(0,len)
     for(i in seq_len(len))
     {
@@ -106,8 +105,15 @@ shinyServer(function(input, output) {
   dat<-process_data()  
   ord<-dat[[3]]
   tw<-dat[[5]][ord,1]
-  c<-data.frame(tw)
+  c<-data.frame(tw)    
 })
+
+   output$testtemp<- renderTable({
+     a<-data()
+     a
+   })
+
+
 
   # stock 
   
