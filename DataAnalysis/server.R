@@ -58,6 +58,7 @@ shinyServer(function(input, output) {
     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
     neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
     sen<-pos1-neg1
+hu.liu.pos
     #outP<-list(sen,myCorpus,tw_df)
   })
   
