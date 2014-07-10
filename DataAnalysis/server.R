@@ -54,11 +54,11 @@ shinyServer(function(input, output) {
     myCorpus <- tm_map(myCorpus, stemDocument)
     myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
     myCorpus<-tm_map(myCorpus, stripWhitespace)   
-    pos<-sapply(myCorpus,function(x) strsplit(x," "))
-    pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
-    neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
-    sen<-pos1-neg1
-hu.liu.pos
+#     pos<-sapply(myCorpus,function(x) strsplit(x," "))
+#     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
+#     neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
+#     sen<-pos1-neg1
+
     #outP<-list(sen,myCorpus,tw_df)
   })
   
@@ -119,7 +119,7 @@ hu.liu.pos
 
    output$testtemp<- renderText({
      a<-prep_data()
-     a
+     a[[1]]
    })
 
 
