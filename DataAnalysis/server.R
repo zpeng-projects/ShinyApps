@@ -1,5 +1,5 @@
 library(shiny)
-library(twitteR)
+
 library(quantmod)
 library(TTR)
 library(MASS)
@@ -23,7 +23,8 @@ hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
 shinyServer(function(input, output) {
   
   # twitter functions
-  data <- reactive({      
+  data <- reactive({ 
+    library(twitteR)
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
