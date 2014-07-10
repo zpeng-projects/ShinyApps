@@ -36,27 +36,28 @@ shinyServer(function(input, output) {
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
-    tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
+#    tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
     if(nrow(tw_df)>{input$tw_number}) {tw_df<-tw_df[1:{input$tw_number},]}
-    tlist<-tolower(tw_df$text)
-    tlist<-gsub("[[:punct:]]", "", tlist)
-    tlist<-gsub("[[:digit:]]", "", tlist)
-    tlist<-gsub("[[:space:]]", " ", tlist)
-    a<-stopwords("en")
-    #myCorpus <- Corpus(VectorSource(tw_df$text))    
-#     myCorpus <- tm_map(myCorpus, removePunctuation)
-#     myCorpus <- tm_map(myCorpus, removeNumbers)
-#     myCorpus <- tm_map(myCorpus, tolower)
-#     myStopwords <- c(stopwords('english'))
-#     myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
-#     dictCorpus <- myCorpus    
-#     myCorpus <- tm_map(myCorpus, stemDocument)
-#     myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
-#     myCorpus<-tm_map(myCorpus, stripWhitespace)   
-#     pos<-sapply(myCorpus,function(x) strsplit(x," "))
-#     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
-#     neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
-#     sen<-pos1-neg1
+#     tlist<-tolower(tw_df$text)
+#     tlist<-gsub("[[:punct:]]", "", tlist)
+#     tlist<-gsub("[[:digit:]]", "", tlist)
+#     tlist<-gsub("[[:space:]]", " ", tlist)
+#     a<-stopwords("en")
+#     tlist %in% a
+    myCorpus <- Corpus(VectorSource(tw_df$text))    
+    myCorpus <- tm_map(myCorpus, removePunctuation)
+    myCorpus <- tm_map(myCorpus, removeNumbers)
+    myCorpus <- tm_map(myCorpus, tolower)
+    myStopwords <- c(stopwords('english'))
+    myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
+    dictCorpus <- myCorpus    
+    myCorpus <- tm_map(myCorpus, stemDocument)
+    myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
+    myCorpus<-tm_map(myCorpus, stripWhitespace)   
+    pos<-sapply(myCorpus,function(x) strsplit(x," "))
+    pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
+    neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
+    sen<-pos1-neg1
     #outP<-list(sen,myCorpus,tw_df)
   })
   
