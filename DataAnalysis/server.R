@@ -1,5 +1,5 @@
 library(shiny)
-
+library(Rcpp)
 library(quantmod)
 library(TTR)
 library(MASS)
@@ -38,7 +38,6 @@ shinyServer(function(input, output) {
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
     tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
     if(nrow(tw_df)>{input$tw_number}) {tw_df<-tw_df[1:{input$tw_number},]}
-
     myCorpus <- Corpus(VectorSource(tw_df$text))    
     myCorpus <- tm_map(myCorpus, removePunctuation)
     myCorpus <- tm_map(myCorpus, removeNumbers)
@@ -111,6 +110,7 @@ shinyServer(function(input, output) {
   c<-data.frame(tw)    
 })
 
+   
 
 
   # stock 
