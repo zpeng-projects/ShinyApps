@@ -313,7 +313,7 @@ df<-df[m:j,]
     c(numericInput("n_sub", "number of subset of variables:", 2),
       numericInput("ntree", "number of trees:", 500))}  
   if({input$model}=="svm"){       
-    c(selectInput("kernel", "Choose a kernel:", choices = c("linear", "radial")), 
+    list(selectInput("kernel", "Choose a kernel:", choices = c("linear", "radial")), 
       selectInput("scale", "scale data?",choices = c(TRUE, FALSE)),
       numericInput("cost", "Cost:0.01-10e5",10))}
 })
