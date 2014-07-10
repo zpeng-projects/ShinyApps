@@ -34,8 +34,9 @@ shinyServer(function(input, output) {
     library(tm)
     library(SnowballC) 
     tw_df<-data()
-#     raw_tweet<-tw_df$text
-#     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)
+    raw_tweet<-tw_df$text
+    tw_df$text<-sapply(tw_df$text,func_removeNonAscii)
+    tw_df
 #     tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
 #     if (nrow(tw_df)>{input$tw_number}) tw_df<-tw_df[1:{input$tw_number},]
 #     myCorpus <- Corpus(VectorSource(tw_df$text))    
