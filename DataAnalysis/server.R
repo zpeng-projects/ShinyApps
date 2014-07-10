@@ -11,6 +11,7 @@ api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
 access_token <- "2534082073-qlC6nlEgvmHb1zzJCqDhZhtIqIAYgZZBDJcOVra"
 access_token_secret <- "GSdNj3Clasqm4Ub5Nl647y8cuafphvPi5NpcHkdasFk0p"
 setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
+
 func_removeNonAscii<-function(x) {
   dat2 <- unlist(strsplit(x, split=" "))
   dat3 <- grepl("dat2", iconv(dat2, "latin1", "ASCII", sub="dat2"))
@@ -23,76 +24,68 @@ hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
 
 shinyServer(function(input, output) {
     
-  stock_dat <- reactive({
-    
-    stock = getSymbols({input$stock_name}, from={input$start_date},
-             to={input$end_date},src="yahoo", auto.assign=F)  
-
-  }) 
+  stock_dat <- reactive({    
+        stock = getSymbols({input$stock_name}, from={input$start_date},
+             to={input$end_date},src="yahoo", auto.assign=F) }) 
   
   model_dat <- reactive({
-    dat<-stock_dat()
-    pred<-c({input$vol},{input$ret},{input$ret1},{input$ret2},
-          {input$ret3},{input$ret4},{input$retSP},{input$retNA}) 
-    n<-nrow(dat)
-    df <- data.frame(matrix(ncol = length(pred), nrow = n))
-    names(df)<-pred   
-    m<-1
-    
-    if(!is.null({input$vol}))
-    { 
-      df$vol<-dat[,5]-Lag(dat[,5],c(1))      
-    }
-    
-    if(!is.null({input$ret}))
-    { 
-      df$ret<-ClCl(dat)*100
-    }  
-    if(!is.null({input$ret4}))
-        { m=5
-       df$ret4<-Lag(ClCl(dat),c(4))*100
-     }  
-    if(!is.null({input$ret3}))
-    {
-      m=4
-      df$ret3<-Lag(ClCl(dat),c(3))*100
-    } 
-    if(!is.null({input$ret2}))
-    { m=3
-      df$ret2<-Lag(ClCl(dat),c(2))*100
-    } 
-    if(!is.null({input$ret1}))
-    { m=2
-      df$ret1<-Lag(ClCl(dat),c(1))*100
-    } 
-    if(!is.null({input$retSP}))
-    { 
-      sp<-getSymbols("^GSPC", from={input$start_date},
+        dat<-stock_dat()
+        pred<-c({input$vol},{input$ret},{input$ret1},{input$ret2},
+              {input$ret3},{input$ret4},{input$retSP},{input$retNA}) 
+        n<-nrow(dat)
+        df <- data.frame(matrix(ncol = length(pred), nrow = n))
+        names(df)<-pred   
+        m<-1    
+        if(!is.null({input$vol}))
+            { 
+              df$vol<-dat[,5]-Lag(dat[,5],c(1))      
+            }    
+        if(!is.null({input$ret}))
+            { 
+              df$ret<-ClCl(dat)*100
+            }  
+        if(!is.null({input$ret4}))
+            { m=5
+              df$ret4<-Lag(ClCl(dat),c(4))*100
+            }  
+        if(!is.null({input$ret3}))
+            {
+              m=4
+              df$ret3<-Lag(ClCl(dat),c(3))*100
+            } 
+        if(!is.null({input$ret2}))
+            { m=3
+              df$ret2<-Lag(ClCl(dat),c(2))*100
+            } 
+        if(!is.null({input$ret1}))
+            { m=2
+              df$ret1<-Lag(ClCl(dat),c(1))*100
+            } 
+        if(!is.null({input$retSP}))
+            { 
+              sp<-getSymbols("^GSPC", from={input$start_date},
                      to={input$end_date},src="yahoo", auto.assign=F)
-      df$retSP<-ClCl(sp)*100
-    }  
-    if(!is.null({input$retNA}))
-    { 
-      NASD<-getSymbols("^IXIC", from={input$start_date},
+              df$retSP<-ClCl(sp)*100
+            }  
+        if(!is.null({input$retNA}))
+            { 
+              NASD<-getSymbols("^IXIC", from={input$start_date},
                      to={input$end_date},src="yahoo", auto.assign=F)
-      df$retNA<-ClCl(NASD)*100
-    } 
-    tmp<-rep(NA,n)
-    #tmp[1:n-1]<-df$ret[2:n]
-    tmp[1:n-1]<-ClCl(dat)[2:n]
-    df$updown<-tmp
-    m<-m+1
-    j<-n-1
-    df$updown<-ifelse(df$updown>0,"up","down")
-    df<-df[m:j,]    
-  })
-  
+              df$retNA<-ClCl(NASD)*100
+            } 
+        tmp<-rep(NA,n)    
+        tmp[1:n-1]<-ClCl(dat)[2:n]
+        df$updown<-tmp
+        m<-m+1
+        j<-n-1
+        df$updown<-ifelse(df$updown>0,"up","down")
+        df<-df[m:j,]    
+      })
   
   data <- reactive({      
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
   })
-      
   
   prep_data <- reactive({ 
     tw_df<-data()
@@ -142,30 +135,14 @@ shinyServer(function(input, output) {
   })
   
   output$plot1 <- renderPlot({
-    
     a<-stock_dat()
     if ({input$cht}=="lchart") lineChart(a)
     if ({input$cht}=="bchart") barChart(a)
     if ({input$cht}=="cchart") candleChart(a,multi.col=TRUE)
     addBBands()
-     
-#     model_order<-{input$model_order}
-#     data_a<-stock_dat()
-#     x<-data_a$b
-#     y<-data_a$a
-#     n<-length(x)
-#     xla<-paste("number of days since",as.character(x[n]))
-#     xx<-as.numeric(difftime(as.Date(as.character(x)),as.Date(as.character(x[n])),units="days"))
-#     plot(xx,y,xlab=xla,ylab="stock price ($)",col="red")  
-#     title(paste("Stock price of",toupper({input$stock_name})))
-#     xfit<-lm(y~ poly(xx,model_order))
-#     points(xx, predict(xfit), type="l", col="blue", lwd=2)
   })    
   
-  
-  
-  output$plot <- renderPlot({   
-    
+  output$plot <- renderPlot({ 
     dat<-process_data()
     tmp<-as.numeric(dat[[5]]$created)
     len<-nrow(dat[[5]])
@@ -188,9 +165,8 @@ shinyServer(function(input, output) {
                 {input$tw_query},"\"", "\n total", len, "tweets retrieved in",timeP[1],unit))
       
   })
-
-    
-    model_do<-reactive({
+  
+  model_do<-reactive({
       
       dat<-model_dat()
       n<-nrow(dat)
@@ -319,61 +295,29 @@ shinyServer(function(input, output) {
 #      a
  })
 
-output$testControls <- renderUI({
-  if({input$model}=="knn"){
-    numericInput("N_knn", "K nearest neighbors:", 10)}
-  if({input$model}=="rf"){       
-    c(numericInput("n_sub", "number of subset of variables:", 2),
-      numericInput("ntree", "number of trees:", 500))}  
-  if({input$model}=="svm"){       
-    c(selectInput("kernel", "Choose a kernel:", 
-                  choices = c("linear", "radial")), 
-      selectInput("scale", "scale data?", 
-                  choices = c(TRUE, FALSE)),
-      numericInput("cost", "Cost:0.01-10e5",10))}
-})
+  output$testControls <- renderUI({
+      if({input$model}=="knn"){
+            numericInput("N_knn", "K nearest neighbors:", 10)}
+      if({input$model}=="rf"){       
+            c(numericInput("n_sub", "number of subset of variables:", 2),
+              numericInput("ntree", "number of trees:", 500))}  
+      if({input$model}=="svm"){       
+            c(selectInput("kernel", "Choose a kernel:", choices = c("linear", "radial")), 
+              selectInput("scale", "scale data?",choices = c(TRUE, FALSE)),
+              numericInput("cost", "Cost:0.01-10e5",10))}
+   })
 
-data_work <- reactive({  
-  dist <- switch(input$dist_t,
-                 norm = rnorm,
-                 unif = runif,
-                 lnorm = rlnorm,
-                 exp = rexp,
-                 rnorm)
-  
-  dist(input$n_t)
-})
-output$plot_t <- renderPlot({
-  dist <- input$dist_t
-  n <- input$n
-  
-  hist(data_work(), 
-       main=paste('r', dist, '(', n, ')', sep=''))
-})
+  output$table1 <- renderTable({
+        dat<-model_do()[[1]]
+        dat
+    })
 
-# Generate a summary of the data
-output$summary_t <- renderPrint({
-  summary(data_work())
-})
+  output$table2 <- renderTable({
+        dat<-model_do()[[2]]
+        dat
+  })
 
-# Generate an HTML table view of the data
-output$table_t <- renderTable({
-  data.frame(x=data_work())
-})
-
-
-
-
-output$table1 <- renderTable({
-  dat<-model_do()[[1]]
-  dat
-})
-output$table2 <- renderTable({
-  dat<-model_do()[[2]]
-  dat
-})
-
-   output$table <- renderTable({
+  output$table <- renderTable({
      dat<-process_data()  
      ord<-dat[[3]]
      tw<-dat[[5]][ord,1]
