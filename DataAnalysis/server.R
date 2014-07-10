@@ -1,6 +1,4 @@
 library(shiny)
-library(tm)
-library(SnowballC) 
 library(quantmod)
 library(TTR)
 library(MASS)
@@ -27,10 +25,13 @@ shinyServer(function(input, output) {
     library(twitteR)
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
+    #detach(twitteR)
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
   })
   
   prep_data <- reactive({ 
+    library(tm)
+    library(SnowballC) 
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)
