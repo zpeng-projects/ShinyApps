@@ -1,5 +1,4 @@
 library(shiny)
-library(twitteR)
 library(tm)
 library(SnowballC) 
 library(quantmod)
@@ -25,6 +24,7 @@ shinyServer(function(input, output) {
   
   # twitter functions
   data <- reactive({  
+    library(twitteR)
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
