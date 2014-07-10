@@ -52,12 +52,12 @@ shinyServer(function(input, output) {
     myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
     dictCorpus <- myCorpus    
     myCorpus <- tm_map(myCorpus, stemDocument)
- #   myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
-  #  myCorpus<-tm_map(myCorpus, stripWhitespace)   
-#     pos<-sapply(myCorpus,function(x) strsplit(x," "))
-#     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
-#     neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
-#     sen<-pos1-neg1
+#   myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
+   myCorpus<-tm_map(myCorpus, stripWhitespace)   
+    pos<-sapply(myCorpus,function(x) strsplit(x," "))
+    pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
+    neg1<-sapply(pos,function(x) sum(x%in%hu.liu.neg))
+    sen<-pos1-neg1
 
     #outP<-list(sen,myCorpus,tw_df)
   })
@@ -119,7 +119,7 @@ shinyServer(function(input, output) {
 
    output$testtemp<- renderText({
      a<-prep_data()
-     a[[1]]
+     a
    })
 
 
