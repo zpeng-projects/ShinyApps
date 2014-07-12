@@ -32,7 +32,7 @@
                     <td>
                         <a href="cert.html" style="color: #FFFFFF">Certificate</td>
                     <td>
-                        <a href="cv.html" style="color: #FFFFFF">Curriculum Vita</td>
+                        <a href="cv.html" style="color: #FFFFFF">Curriculum Vitae</td>
                     <td>
                         <a href="contact.html" style="color: #FFFFFF">Contact</td>
                    </tr>                
@@ -55,6 +55,9 @@
       <div id="projlist" style="width: 900px; margin-top: 10px;" align="left"> 
         <table style="width: 80%;">
                  <tr>
+                     <td align="center">
+                         <button id="proj_b0" class="myButton">Summary</button>
+                     </td>
                      <td align="center">
                          <button id="proj_b1" class="myButton">Stock Price Analysis</button>
                      </td>
@@ -84,12 +87,15 @@
                 $('#proj_b1').click(function () {
                     $('#main_3').load('proj_stock.html');
                 });
-                $('#proj_b3').click(function () {
-                    $('#main_3').load('tabt.html');
+                $('#proj_b0').click(function () {
+                    $('#main_3').load('Test_project.html');
                 });
                 $('#proj_b5').click(function () {
                     $('#main_3').load('proj_FEA.html');
                 });
+            });
+            $(document).ready(function () {
+                 $('#main_3').load('proj_stock.html');
             });
 		        </script>     			         
 	  </div>      	

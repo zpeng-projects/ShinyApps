@@ -4,6 +4,10 @@ library(quantmod)
 library(TTR)
 library(MASS)
 library(class)
+library(ROCR)
+library(pROC)
+library(Deducer)
+library(ggplot2)
 
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
@@ -195,15 +199,15 @@ df<-df[m:j,]
     set.seed(1234)
     fit<-NULL
     rand.pred<-as.factor(ifelse(runif(ntrain)>0.5,"up","down"))
-    train_pred<-table(rand.pred, training$updown)
+    train_pred<-table(prediction=rand.pred, truth=training$updown)
     
     rand.pred<-as.factor(ifelse(runif(ntest)>0.5,"up","down"))        
-    valid_pred<-table(rand.pred, testing$updown)
+    valid_pred<-table(prediction=rand.pred, truth=testing$updown)
   }
-  if({input$model}=="logireg"){
+  else if({input$model}=="logireg"){
     fit =glm(updown ~ . ,data =training, family = binomial)
     
-    glm.probs = predict(fit ,type ="response")
+    glm.probs = predict(fit, training,type ="response")
     glm.pred =rep ("down",ntrain)
     glm.pred[glm.probs >0.5]="up"        
     train_pred<-table(glm.pred, training$updown)
@@ -212,30 +216,36 @@ df<-df[m:j,]
     glm.pred =rep ("down",ntest)
     glm.pred[val.probs >0.5]="up"  
     valid_pred<-table(glm.pred, testing$updown)
-  }
-  if({input$model}=="lda"){
-    fit =lda(updown ~ . ,data =training)
+    fit<-list(glm.probs,training$updown)
     
-    probs = predict(fit)
+  }
+  else if({input$model}=="lda"){
+    fit =lda(updown ~ . ,data =training)    
+    probs = predict(fit,training)    
+    pred.lda <- predict(fit,training)$post[,2]
     pred =probs$class        
     train_pred<-table(pred, training$updown)
     
     probs<-predict(fit,testing)
     pred =probs$class          
     valid_pred<-table(pred, testing$updown)
+    fit<-list(pred.lda,training$updown)
+    
   }
-  if({input$model}=="qda"){
+  else if({input$model}=="qda"){
     fit =qda(updown ~ . ,data =training)
     
-    probs = predict(fit)
+    probs = predict(fit,training)
+    pred.qda <- predict(fit,training)$post[,2]
     pred =probs$class        
     train_pred<-table(pred, training$updown)
     
     probs<-predict(fit,testing)
     pred =probs$class          
     valid_pred<-table(pred, testing$updown)
+    fit<-list(pred.qda,training$updown)
   }
-  if({input$model}=="knn"){
+  else if({input$model}=="knn"){
     
     train.x<-training[,-m]
     test.x<-testing[,-m]
@@ -245,7 +255,7 @@ df<-df[m:j,]
     train_pred<-NULL                
     valid_pred<-table(fit, testing$updown)
   }
-  if({input$model}=="tree"){
+  else if({input$model}=="tree"){
     library(tree)
     fit =tree(updown ~ . ,data =training)
     
@@ -257,7 +267,7 @@ df<-df[m:j,]
     pred =probs         
     valid_pred<-table(pred, testing$updown)
   }
-  if({input$model}=="rf"){
+  else if({input$model}=="rf"){
     library(randomForest)
     set.seed(1234)
     fit =randomForest(updown ~ . ,data =training, mtry ={input$n_sub}, 
@@ -269,17 +279,17 @@ df<-df[m:j,]
     
     probs<-predict(fit,newdata=testing)
     pred =probs         
-    valid_pred<-table(pred, testing$updown)
+    valid_pred<-pred
   }
   
-  if({input$model}=="svm"){
+  else if({input$model}=="svm"){
     library(e1071)
     training$updown<-as.factor(training$updown)
-    testing$updown<-as.factor(test$updown)
-    fit =svm(updown ~ . ,data =training, kernel={input$kernel}, 
-             cost ={input$cost}, scale = {input$scale})
+    testing$updown<-as.factor(testing$updown)
+    fit =svm(updown ~ . ,data =training, kernel={input$kernel},cost=
+               {input$cost}, scale = {input$scale})
     
-    probs = predict(fit)
+    probs = predict(fit,training)
     pred =probs        
     train_pred<-table(pred, training$updown)
     
@@ -308,26 +318,45 @@ df<-df[m:j,]
 
   output$testControls <- renderUI({
   if({input$model}=="knn"){
-    numericInput("N_knn", "K nearest neighbors:", 10)}
+    numericInput("N_knn", "K nearest neighbors:", value=10, min=1, step=1)}
   if({input$model}=="rf"){       
     c(numericInput("n_sub", "number of subset of variables:", 2),
       numericInput("ntree", "number of trees:", 500))}  
   if({input$model}=="svm"){       
     list(selectInput("kernel", "Choose a kernel:", choices = c("linear", "radial")), 
-      selectInput("scale", "scale data?",choices = c(TRUE, FALSE)),
-      numericInput("cost", "Cost:0.01-10e5",10))}
+      selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
+      numericInput("cost", "Cost:0.01-10e5", value=1, min=0.01,max=1000000))}
 })
 
-  output$table1 <- renderTable({
-      dat<-model_do()[[1]]
-      dat
+    output$rocresult <- renderPlot({
+      dat<-model_do()      
+#       if({input$model}=="logireg") {
+#         pred.roc.lda <- prediction(dat[[3]][[1]],dat[[3]][[2]])
+#         perf.roc.lda <- performance(pred.roc.lda, "tpr", "fpr")
+#         plot(perf.roc.lda)}
+        pred.roc<- prediction(dat[[3]][[1]],dat[[3]][[2]])
+        perf.roc<- performance(pred.roc, "tpr", "fpr")
+        plot(perf.roc)
       })
 
-  output$table2 <- renderTable({
+    output$ConfusionTrain <- renderTable({
+      dat<-model_do()[[1]]         
+      dat  
+      })
+  
+    output$resultTrain <- renderPrint({
+      dat<-model_do()[[1]]         
+      paste("Accuracy:",round((dat[1,1]+dat[2,2])/(dat[1,1]+dat[2,2]+dat[1,2]+dat[2,1])*100,2),"%")
+      })
+
+    output$ConfusionTest <- renderTable({
       dat<-model_do()[[2]]
       dat
       })
-
+    output$resultTest <- renderPrint({
+      dat<-model_do()[[2]]         
+      paste("Accuracy:",round((dat[1,1]+dat[2,2])/(dat[1,1]+dat[2,2]+dat[1,2]+dat[2,1])*100,2),"%")
+})
   
   
 })
