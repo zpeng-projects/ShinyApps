@@ -46,6 +46,7 @@ shinyServer(function(input, output) {
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
     tw_df<-tw_df[!grepl("sex|porn|nude",tolower(tw_df[,1])),]
+    tw_df[,1]<-gsub("[hH][Tt][Tt][Pp]","",tw_df[,1])
     if(nrow(tw_df)>{input$tw_number}) {tw_df<-tw_df[1:{input$tw_number},]}
     myCorpus <- Corpus(VectorSource(tw_df$text))    
     myCorpus <- tm_map(myCorpus, removePunctuation)
@@ -121,8 +122,10 @@ shinyServer(function(input, output) {
   output$table <- renderTable({
   dat<-process_data()  
   ord<-dat[[3]]
-  tweets<-dat[[5]][ord,1]
-  c<-data.frame(tweets)    
+  if({input$tw_type}=="rawtw"){avv<-data.frame(tweets=dat[[5]][ord,1])}
+  else {tweetst<-unlist(dat[[4]])
+  avv<-data.frame(tweets=tweetst[ord])}
+  avv
 })
    
   # stock 
