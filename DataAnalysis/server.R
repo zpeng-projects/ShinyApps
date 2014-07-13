@@ -8,6 +8,14 @@ library(ROCR)
 library(pROC)
 library(Deducer)
 library(ggplot2)
+library(tree)
+library(randomForest)
+library(caret)
+library(e1071)
+library(kernlab)
+library(twitteR)
+library(tm)
+library(SnowballC) 
 
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
@@ -27,16 +35,13 @@ hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
 shinyServer(function(input, output) {
   
   # twitter functions
-  data <- reactive({ 
-    library(twitteR)
+  data <- reactive({     
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
   })
   
   prep_data <- reactive({ 
-    library(tm)
-    library(SnowballC) 
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
@@ -50,7 +55,7 @@ shinyServer(function(input, output) {
     myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
     dictCorpus <- myCorpus    
     myCorpus <- tm_map(myCorpus, stemDocument)
-#   myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
+ #  myCorpus <- tm_map(myCorpus, stemCompletion, dictionary=dictCorpus)  
    myCorpus<-tm_map(myCorpus, stripWhitespace)   
     pos<-sapply(myCorpus,function(x) strsplit(x," "))
     pos1<-sapply(pos,function(x) sum(x%in%hu.liu.pos))
@@ -58,7 +63,7 @@ shinyServer(function(input, output) {
     sen<-pos1-neg1
     outP<-list(sen,myCorpus,tw_df)
   })
-  
+ 
   process_data <- reactive({
     a<-prep_data() 
     sen<-a[[1]]   
@@ -82,6 +87,12 @@ shinyServer(function(input, output) {
     } 
     b<-list(ax,sen,ord,a[[2]],a[[3]])
   })
+ 
+  rec_data <- reactive({ 
+   a<-dat<-process_data()
+   
+  })
+   
   
   output$plot <- renderPlot({ 
     dat<-process_data()
@@ -102,16 +113,16 @@ shinyServer(function(input, output) {
       unit<-"day"
     } 
     plot(timeP,dat[[1]],type="l",col="red",ylab="Sentiment",xlab=paste("time in ",unit)) 
-    title(paste("time series of sentiment for \"", 
-{input$tw_query},"\"", "\n total", len, "tweets retrieved in",timeP[1],unit))
+    title(paste("sentiment change for \"", 
+{input$tw_query},"\"", "\n total", len, "in the last",round(timeP[1],2),unit))
 
   })
   
   output$table <- renderTable({
   dat<-process_data()  
   ord<-dat[[3]]
-  tw<-dat[[5]][ord,1]
-  c<-data.frame(tw)    
+  tweets<-dat[[5]][ord,1]
+  c<-data.frame(tweets)    
 })
    
   # stock 
@@ -245,18 +256,19 @@ df<-df[m:j,]
     valid_pred<-table(pred, testing$updown)
     fit<-list(pred.qda,training$updown)
   }
-  else if({input$model}=="knn"){
-    
+  else if({input$model}=="knn"){    
     train.x<-training[,-m]
     test.x<-testing[,-m]
-    train.y<-training[,m]
-    test.y<-testing[,m]        
-    fit =knn(train.x,test.x, train.y, {input$N_knn})        
-    train_pred<-NULL                
-    valid_pred<-table(fit, testing$updown)
+    train.y<-as.factor(training[,m])
+    test.y<-as.factor(testing[,m])        
+    fit <- knn(train.x,test=test.x,cl=train.y, k={input$N_knn})  
+    pred<-fit
+    train_pred<-NULL             
+    valid_pred<-table(fit, test.y)
+    fit<-list(pred[,2],test.y)
   }
   else if({input$model}=="tree"){
-    library(tree)
+    
     fit =tree(updown ~ . ,data =training)
     
     probs = predict(fit,training, type ="class")
@@ -266,12 +278,14 @@ df<-df[m:j,]
     probs<-predict(fit,testing,type ="class")
     pred =probs         
     valid_pred<-table(pred, testing$updown)
+    #fit<-list(probs,training$updown)
   }
   else if({input$model}=="rf"){
-    library(randomForest)
+    library (e1071)
     set.seed(1234)
-    fit =randomForest(updown ~ . ,data =training, mtry ={input$n_sub}, 
-                      ntree ={input$ntree})
+    cvCtrl <- trainControl(method = "repeatedcv", repeats = 3)
+    fit<-train(updown ~ .,data = training, method = "rf",trControl = cvCtrl)
+    #fit =randomForest(updown ~ . ,data =training, mtry ={input$n_sub},ntree ={input$ntree})
     
     probs = predict(fit)
     pred =probs        
@@ -279,28 +293,13 @@ df<-df[m:j,]
     
     probs<-predict(fit,newdata=testing)
     pred =probs         
-    valid_pred<-pred
+   
   }
   
-  else if({input$model}=="svm"){
-    library(e1071)
-    training$updown<-as.factor(training$updown)
-    testing$updown<-as.factor(testing$updown)
-    fit =svm(updown ~ . ,data =training, kernel={input$kernel},cost=
-               {input$cost}, scale = {input$scale})
-    
-    probs = predict(fit,training)
-    pred =probs        
-    train_pred<-table(pred, training$updown)
-    
-    probs<-predict(fit,newdata=testing)
-    pred =probs         
-    valid_pred<-table(pred, testing$updown)
+  else if({input$model}=="svm"){  
   }
-  
   outP<-list(train_pred,valid_pred,fit)
-  
-  
+ 
   
   #   })
   
@@ -318,35 +317,47 @@ df<-df[m:j,]
 
   output$testControls <- renderUI({
   if({input$model}=="knn"){
-    numericInput("N_knn", "K nearest neighbors:", value=10, min=1, step=1)}
-  if({input$model}=="rf"){       
+    numericInput("N_knn", "K nearest neighbors:", value=1, min=1, step=1)}
+  else if({input$model}=="rf"){       
     c(numericInput("n_sub", "number of subset of variables:", 2),
       numericInput("ntree", "number of trees:", 500))}  
-  if({input$model}=="svm"){       
-    list(selectInput("kernel", "Choose a kernel:", choices = c("linear", "radial")), 
-      selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
-      numericInput("cost", "Cost:0.01-10e5", value=1, min=0.01,max=1000000))}
+#   else if({input$model}=="svm"){       
+#     list(selectInput("kernel", "Choose a kernel:", choices = c("linear","polynomial", "radial")), 
+#       selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
+#       numericInput("cost", "Cost:0.01-10e5", 1))
+#     ifelse({input$kernel}=="polynomial",numericInput("porder", "polynomial order:", 2),NULL),
+#     ifelse({input$kernel}=="radial",numericInput("gamma", "gamma", value=1),NULL))
+ #   }
+  
+  
 })
 
     output$rocresult <- renderPlot({
       dat<-model_do()      
-#       if({input$model}=="logireg") {
-#         pred.roc.lda <- prediction(dat[[3]][[1]],dat[[3]][[2]])
-#         perf.roc.lda <- performance(pred.roc.lda, "tpr", "fpr")
-#         plot(perf.roc.lda)}
+      if({input$model}=="tree") {
+        plot(dat[[3]])
+        text(dat[[3]], pretty =0)}
+      else if({input$model}=="svm") {
+        a<-dat[[3]]
+       rocplot(a[[1]],a[[2]])}       
+      else {
         pred.roc<- prediction(dat[[3]][[1]],dat[[3]][[2]])
         perf.roc<- performance(pred.roc, "tpr", "fpr")
-        plot(perf.roc)
+        plot(perf.roc)}
       })
 
     output$ConfusionTrain <- renderTable({
-      dat<-model_do()[[1]]         
-      dat  
+      
+      if({input$model}!="knn")
+      {
+        dat<-model_do()[[1]]         
+        dat } 
       })
   
     output$resultTrain <- renderPrint({
-      dat<-model_do()[[1]]         
-      paste("Accuracy:",round((dat[1,1]+dat[2,2])/(dat[1,1]+dat[2,2]+dat[1,2]+dat[2,1])*100,2),"%")
+      if({input$model}!="knn")
+      {dat<-model_do()[[1]]         
+      paste("Accuracy:",round((dat[1,1]+dat[2,2])/(dat[1,1]+dat[2,2]+dat[1,2]+dat[2,1])*100,2),"%")}      
       })
 
     output$ConfusionTest <- renderTable({

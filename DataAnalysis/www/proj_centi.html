@@ -1,74 +1,70 @@
  <script src="shared/shiny.js" type="text/javascript"></script> 
  
- <h2> Twitter Sentiment Analysis</h2>
-<table align="center" style="width: 100%" cellspacing="20px">
-    <tr align="center">
-        <td style="width: 30%">
-            <div>
-    <form>
-    <p>
-        <label>type in you twitter query:</label><br /> 
-        <input type="text" name="tw_query" value="iphone"/>
-    </p>
-    <p>
-        <label>Number of tweets:</label><br /> 
-        <input type="number" name="tw_number" value="10" min="10" max="1000" />
-    </p>
-        <input id="sub1" class="submit1" type="submit" value="submit" />       
-    </form>
-    <div id="Searchtw"></div>   
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sub1').click(function () {
-                document.getElementById('Searchtw').innerHTML = "wait";
-            });
-          
-        });
-	</script>       
-   
-</div>
+ <h2 style="font-family: Arial, Helvetica, sans-serif; color: #3366CC"> Twitter Sentiment Analysis</h2>
+ <hr />
+  <table align="center" style="width: 100%" cellspacing="20px">
+    <tr align="left">
+        <td style="width: 30%; border-right-style: solid; border-right-width: thin;" valign="top">
+        <div>
+        <form>
+            <p><label>Type in you twitter query:</label><br />
+            <input type="text" name="tw_query" value="tesla"/></p>    
+            <p><label>Number of tweets:</label><br /> 
+            <input type="number" name="tw_number" value=10 min=1 max="10000",step=1 /></p>   
+            <input id="sub1" class="submit1" type="submit" value="submit" />       
+        </form>
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#sub1').click(function () {
+                        $('#plot').load('empty.html');
+                    });  
+                });
+	    </script> 
         </td>
-        <td style="width: 65%">
+        <td style="width: 70%">
             <div> 
-  <div id="plot" class="shiny-plot-output" 
-       style="width: 80%; height: 400px"><h2>searching tweets ... (it may take 1 min to get 500 tweets)</h2></div> 
-  </div>
-  <script type="text/javascript">
-       
-          $('#plot').change(function () {
+            <div id="plot" class="shiny-plot-output" 
+            style="height: 400px"><h3 style="color: #003399">searching tweets now... (it may take 1 min to get 500 tweets)</h3></div> 
+        </div>
+            <script type="text/javascript">       
+          $(document).ready(function () {
+            $('#plot').change(function () {
               document.getElementById('Searchtw').innerHTML = "nn";         
-      });
-	</script>       
-
-        </td>
+            });
+            });
+	    </script>
+          </td>
     </tr>
-    <tr align="center" valign="top" 
-        style="border-top-style: groove; border-top-width: medium; border-color: #0000FF" bgcolor="ButtonFace">
-        <td style="width: 30%" >
-           <form id="firstF" style="margin-top: 30px">
-       <p>
-        <label>Number of tweets to read:</label><br /> 
-        <input type="number" name="tw_Read" value="5" min="0" />  
-    </p>
-    <p>
-        <label>order of the tweets:</label><br /> 
-        <select name="dat_order">
-            <option value="desc">start from most positive</option>
-            <option value="asc">start from most negative</option>
-      <option value="time">start from most recent</option>      
-    </select> 
-    </p> 
-    <input class="submit1" type="submit" value="submit" />
-    
-    </form> 
-
-        </td>
-        <td style="width: 65%">
-          <div style="width: 90%; height:400px;">
-            <div id="table" class="shiny-html-output"></div>
-            <div id="testtemp" class="shiny-html-output"></div> 
- 
-        </div>  
-        </td>
-    </tr>
-</table>
+  </table>
+  <hr />
+  <p><h3 align="center" style="font-family: Arial, Helvetica, sans-serif; color: #3366CC">Read the tweets:</h3></p>
+  <div>
+        <table align="center" style="width: 100% " cellspacing="20px">
+            <tr align="left" valign="top" style="border-top-style: solid; border-top-width: thin;">
+                <td style="width: 30%" >
+                <form id="firstF" style="margin-top: 30px">
+                    <p><label>Number of tweets to read:</label><br /> 
+                        <input type="number" name="tw_Read" value=5 min=1 step=1/></p>
+                    <p><label>Sorting the tweets:</label><br /> 
+                        <select name="dat_order">
+                            <option value="desc">start from most positive</option>
+                            <option value="asc">start from most negative</option>
+                            <option value="time">start from most recent</option>      
+                        </select> 
+                    </p> 
+                    <p><label>raw/processed tweets:</label><br /> 
+                        <select name="tw_type">
+                            <option value="desc">raw tweets</option>
+                            <option value="asc">processed tweets(</option>                                  
+                        </select> 
+                    </p> 
+                 <input class="submit1" type="submit" value="submit" />
+                 </form> 
+                 </td>
+                <td style="width: 70%;">  
+                     <div id="table" class="shiny-html-output" style="text-align: left; line-height: 10px"></div>                     
+                </td>
+            </tr>
+        </table>
+   </div>
+  <hr />
