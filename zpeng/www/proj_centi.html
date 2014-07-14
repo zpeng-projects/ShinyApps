@@ -1,7 +1,19 @@
  <script src="shared/shiny.js" type="text/javascript"></script> 
  
  <h2 style="font-family: Arial, Helvetica, sans-serif; color: #3366CC"> Twitter Sentiment Analysis</h2>
+ <p><b>Introduction</b> This is part of the project I am working on: to build a platform which allows users to analyse the data of their interest,
+  and to build their own predictive model.</p>
+  <p>User can enter the twitter query and totla number of tweets they want to search. The app uses Twitter API to retrive the tweens, and 
+  clean up the data (filter out R-rated tweets, and remove numbers, special symbols,  stopwords and stemming). After that it counts 
+  the number of positive words (N_pos) and negative works (N_neg) for each tweet. The sentiment of the query at anytime is a average of (N_pos-N_neg)
+  of 100 tweets closest to that time. Note the time scale in the plot can vary greatly depending on the popularity of the query.</p>
+  <p>Searching twitter can be very slow. Part of the reason is that the page is hosted on a tier1 micro EC2 instance</p>
+  <p><b>Tools used:</b> R, shiny, text minging(tm), twitter search (twitteR), html,javascript, so on. The page is hosted on a Amazon ec2 
+  instance (t1.micro). Shiny serve is installed and configured on the ec2 instance by me.</p>
+   
+
  <hr />
+
   <table align="center" style="width: 100%" cellspacing="20px">
     <tr align="left">
         <td style="width: 30%; border-right-style: solid; border-right-width: thin;" valign="top">
