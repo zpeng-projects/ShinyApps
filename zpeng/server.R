@@ -17,9 +17,12 @@ shinyServer(function(input, output) {
   
   # twitter functions
   data <- reactive({    
+    library(ROAuth)
     library(RCurl)
     library(Rcpp)
-    library(ROAuth)
+    library(bitops)
+    library(digest)
+    library(rjson)
     library(twitteR)
     
     
