@@ -13,8 +13,7 @@ library(randomForest)
 library(caret)
 library(e1071)
 library(kernlab)
-library(tm)
-library(SnowballC) 
+
 
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
@@ -42,6 +41,8 @@ shinyServer(function(input, output) {
   })
   
   prep_data <- reactive({ 
+    library(tm)
+    library(SnowballC) 
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
