@@ -14,10 +14,27 @@
        top: 50px;
        
 }
-
+.buttonsel
+{   padding:5px
+    font-family: 'Comic Sans MS';
+    font-weight: bold;
+    color: #003366;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-style: solid;
+    border-color: #006600;
+}
+.buttonnot
+{
+    color: #FFFFFF;
+    background-color: green;
+}
 .myButton
 {
-    padding: 5px;
+    padding:5px    
     font-family: 'Comic Sans MS';
     font-weight: bold;
     color: #FFFFFF;

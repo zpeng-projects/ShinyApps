@@ -1,4 +1,20 @@
 library(shiny)
+library(twitteR)
+library(tm)
+library(SnowballC) 
+library(quantmod)
+library(TTR)  
+library(MASS)
+library(class)
+library(ROCR)
+library(pROC)
+#library(Deducer)
+library(ggplot2)
+library(tree)
+library(randomForest)
+# library(caret)
+library(e1071)
+#library(kernlab)  
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
 access_token <- "2534082073-qlC6nlEgvmHb1zzJCqDhZhtIqIAYgZZBDJcOVra"
@@ -18,16 +34,13 @@ shinyServer(function(input, output) {
   # twitter functions
   data <- reactive({  
     #do not install twitteR, only do install_github("twitteR", username="geoffjentry")
-    #some error, ctrl-c interupt
-    library(twitteR)
+    #some error, ctrl-c interupt    
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))  })   
   
   
-  prep_data <- reactive({ 
-    library(tm)
-    library(SnowballC) 
+  prep_data <- reactive({     
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
@@ -111,8 +124,7 @@ shinyServer(function(input, output) {
    
   # stock 
   stock_dat <- reactive({   
-  library(quantmod)
-  library(TTR)   
+  
   stock = getSymbols({input$stock_name}, from={input$start_date},
                      to={input$end_date},src="yahoo", auto.assign=F) }) 
 
@@ -179,17 +191,7 @@ df<-df[m:j,]
 })  
 
   model_do<-reactive({
-    library(MASS)
-    library(class)
-    library(ROCR)
-    library(pROC)
-    #library(Deducer)
-    library(ggplot2)
-    library(tree)
-    library(randomForest)
-    library(caret)
-    library(e1071)
-    library(kernlab)  
+   
   dat<-model_dat()
   n<-nrow(dat)
   m<-ncol(dat)
@@ -212,62 +214,58 @@ df<-df[m:j,]
     valid_pred<-table(prediction=rand.pred, truth=testing$updown)
   }
   else if({input$model}=="logireg"){
-    fit =glm(updown ~ . ,data =training, family = binomial)
+    fit <-glm(updown ~ . ,data =training, family = binomial)
     
     glm.probs = predict(fit, training,type ="response")
-    glm.pred =rep ("down",ntrain)
+    glm.pred <-rep ("down",ntrain)
     glm.pred[glm.probs >0.5]="up"        
     train_pred<-table(glm.pred, training$updown)
     
     val.probs<-predict(fit,testing,type ="response")
-    glm.pred =rep ("down",ntest)
+    glm.pred <-rep ("down",ntest)
     glm.pred[val.probs >0.5]="up"  
-    valid_pred<-table(glm.pred, testing$updown)
-    fit<-list(glm.probs,training$updown)
-    
+    valid_pred<-table(glm.pred, testing$updown)  
   }
   else if({input$model}=="lda"){
-    fit =lda(updown ~ . ,data =training)    
-    probs = predict(fit,training)    
+    fit <-lda(updown ~ . ,data =training)    
+    probs <- predict(fit,training)    
     pred.lda <- predict(fit,training)$post[,2]
-    pred =probs$class        
+    pred<-probs$class        
     train_pred<-table(pred, training$updown)
     
     probs<-predict(fit,testing)
     pred =probs$class          
-    valid_pred<-table(pred, testing$updown)
-    fit<-list(pred.lda,training$updown)
+    valid_pred<-table(pred, testing$updown)   
     
   }
   else if({input$model}=="qda"){
     fit =qda(updown ~ . ,data =training)
     
-    probs = predict(fit,training)
+    probs <- predict(fit,training)
     pred.qda <- predict(fit,training)$post[,2]
-    pred =probs$class        
+    pred <-probs$class        
     train_pred<-table(pred, training$updown)
     
     probs<-predict(fit,testing)
     pred =probs$class          
     valid_pred<-table(pred, testing$updown)
-    fit<-list(pred.qda,training$updown)
+   
   }
   else if({input$model}=="knn"){    
     train.x<-training[,-m]
     test.x<-testing[,-m]
     train.y<-as.factor(training[,m])
     test.y<-as.factor(testing[,m])        
-    fit <- knn(train.x,test=test.x,cl=train.y, k={input$N_knn})  
-    pred<-fit
+    fit <- knn(train.x,test.x,train.y, k={input$N_knn})  
     train_pred<-NULL             
     valid_pred<-table(fit, test.y)
-    fit<-list(pred[,2],test.y)
+    
   }
   else if({input$model}=="tree"){
     
-    fit =tree(updown ~ . ,data =training)
+    fit <-tree(updown ~ . ,data =training)
     
-    probs = predict(fit,training, type ="class")
+    probs <- predict(fit,training, type ="class")
     pred =probs        
     train_pred<-table(pred, training$updown)
     
@@ -277,23 +275,55 @@ df<-df[m:j,]
     #fit<-list(probs,training$updown)
   }
   else if({input$model}=="rf"){
-    library (e1071)
+   
     set.seed(1234)
-    cvCtrl <- trainControl(method = "repeatedcv", repeats = 3)
-    fit<-train(updown ~ .,data = training, method = "rf",trControl = cvCtrl)
-    #fit =randomForest(updown ~ . ,data =training, mtry ={input$n_sub},ntree ={input$ntree})
-    
+    fit <- randomForest(updown ~ . ,data =training, mtry ={input$n_sub},ntree ={input$ntree})    
     probs = predict(fit)
     pred =probs        
     train_pred<-table(pred, training$updown)
     
-    probs<-predict(fit,newdata=testing)
+    probs<-predict(fit,testing)
     pred =probs         
-   
+    valid_pred<-table(pred, testing$updown)
   }
   
-  else if({input$model}=="svm"){  
-  }
+#   else if({input$model}=="svm"){      
+#     library(e1071)
+#     fit <- svm(updown ~ . ,data =training, kernel ="linear", cost ={input$cost},scale=FALSE)    
+#     probs = predict(fit,training)
+#     pred =probs        
+#     train_pred<-table(pred, training$updown)
+#     
+#     probs<-predict(fit,testing)
+#     pred =probs         
+#     valid_pred<-table(pred, testing$updown)    
+#   }
+#   else if({input$model}=="svm_poly"){      
+#     library(e1071)
+#     fit <- svm(updown ~ . ,data =training, kernel ="polynimial",degree={input$porder}, cost ={input$cost},scale=FALSE)    
+#     probs = predict(fit,training)
+#     pred =probs        
+#     train_pred<-table(pred, training$updown)
+#     
+#     probs<-predict(fit,testing)
+#     pred =probs         
+#     valid_pred<-table(pred, testing$updown)    
+#   }
+#   else if({input$model}=="svm_rad"){      
+#     library(e1071)
+#     fit <- svm(updown ~ . ,data =training, kernel ="radial",gamma={input$gamma}, cost ={input$cost},scale=FALSE)    
+#     probs = predict(fit,training)
+#     pred =probs        
+#     train_pred<-table(pred, training$updown)
+#     
+#     probs<-predict(fit,testing)
+#     pred =probs         
+#     valid_pred<-table(pred, testing$updown)    
+#   }
+#   
+  
+  
+  
   outP<-list(train_pred,valid_pred,fit)
  
   
@@ -311,36 +341,42 @@ df<-df[m:j,]
   #      a
 })
 
-  output$testControls <- renderUI({
+output$testControls <- renderUI({
   if({input$model}=="knn"){
     numericInput("N_knn", "K nearest neighbors:", value=1, min=1, step=1)}
   else if({input$model}=="rf"){       
     c(numericInput("n_sub", "number of subset of variables:", 2),
       numericInput("ntree", "number of trees:", 500))}  
-#   else if({input$model}=="svm"){       
-#     list(selectInput("kernel", "Choose a kernel:", choices = c("linear","polynomial", "radial")), 
-#       selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
-#       numericInput("cost", "Cost:0.01-10e5", 1))
-#     ifelse({input$kernel}=="polynomial",numericInput("porder", "polynomial order:", 2),NULL),
-#     ifelse({input$kernel}=="radial",numericInput("gamma", "gamma", value=1),NULL))
- #   }
-  
-  
+  else if({input$model}=="svm"){
+        list(selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
+           numericInput("cost", "Cost:0.01-10e5", value=1))}
+  else if({input$model}=="svm_poly"){
+      list(selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
+           numericInput("cost", "Cost:0.01-10e5", value=1),numericInput("porder", "polynomial order:",2))}
+  else if({input$model}=="svm_rad"){
+      list(selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
+           numericInput("cost", "Cost:0.01-10e5", value=1),numericInput("gamma", "gamma", value=1))}
+ 
 })
 
-    output$rocresult <- renderPlot({
-      dat<-model_do()      
-      if({input$model}=="tree") {
-        plot(dat[[3]])
-        text(dat[[3]], pretty =0)}
-      else if({input$model}=="svm") {
-        a<-dat[[3]]
-       rocplot(a[[1]],a[[2]])}       
-      else {
-        pred.roc<- prediction(dat[[3]][[1]],dat[[3]][[2]])
-        perf.roc<- performance(pred.roc, "tpr", "fpr")
-        plot(perf.roc)}
-      })
+#     output$rocresult <- renderPlot({
+#       dat<-model_do()      
+#       if({input$model}=="tree") {
+#         plot(dat[[3]])
+#         text(dat[[3]], pretty =0)}
+#       else if({input$model}=="svm") {
+#         a<-dat[[3]]
+#        rocplot(a[[1]],a[[2]])} 
+#       else if({input$model}=="logireg"){
+#         
+#         
+#         
+#       }
+#       else {
+#         pred.roc<- prediction(dat[[3]][[1]],dat[[3]][[2]])
+#         perf.roc<- performance(pred.roc, "tpr", "fpr")
+#         plot(perf.roc)}
+#       })
 
     output$ConfusionTrain <- renderTable({
       

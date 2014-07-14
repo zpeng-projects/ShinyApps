@@ -34,7 +34,7 @@
         <tr align="left" >
             <td style="width:35%; border-right-style: solid; border-right-width: thin;" valign="top">            
                 <b>Outcome</b>: Next-day price up/down
-                <form id="model_sel" style="text-align: left"><b>Choose predictors:</b>
+                <form id="model_sel" style="text-align: left"><b>Choose predictors:</b><br />
                     <input type="checkbox" name="vol" value="vol" checked>Volume change<br />
                     <input type="checkbox" name="ret" value="ret" checked>Stock Return<br />
                     <input type="checkbox" name="ret1" value="ret1" checked>Return 1-day ago<br />
@@ -43,8 +43,12 @@
                     <input type="checkbox" name="ret4" value="ret4">Return 4-day ago<br />
                     <input type="checkbox" name="retSP" value="retSP" checked>Return of S&P index<br />
                     <input type="checkbox" name="retNA" value="retNA">Return of Nasdaq index<br />
-                </form> 
-                <label><b>Divide data into training / Testing datasets:</b></label><br />
+                </form>  
+            </td>
+            <td style="width: 70%" valign="top">             
+                <div style="border-bottom-style: solid; border-bottom-width: thin; clear: both; width: 100%;">
+                    <h3>Model Performance: confusion matrix</h3>
+                    <label><b>Divide data into training / Testing datasets:</b></label><br />
                      <input type="number" name="sampleR" max=1 min=0 step=0.01 value="0.7"/> proportion of training dataset<br />
                 <label><b>Select model:</b></label><br /> 
                     <select name="model">                    
@@ -54,16 +58,14 @@
                     <option value="knn">K-Nearest Neighbors (KNN) </option>
                     <option value="tree">Clasification Tree (CART) </option>    
                     <option value="rf">Random Forest </option>  
-                    <option value="svm">SVM</option>                      
-                </select>             
+                    <!--<option value="svm">SVM -linear kernel (slow)</option>  
+                    <option value="svm_poly">SVM -Polynomial kernel (slow)</option>  
+                    <option value="svm_rad">SVM -radial kernel (slow)</option>    -->                  
+                </select>   
                 <div align="left" style="width: 200px; border-right-style: groove; border-bottom-style: groove; 
                     border-left-style: groove;"><div id="testControls" class="shiny-html-output" align="left"></div>
-                </div>
-            </td>
-            <td style="width: 70%" valign="top">             
-                <div style="border-bottom-style: solid; border-bottom-width: thin; height: 380px; clear: both; width: 100%;">
-                    <h3>Model Performance (ROC curve):</h3>
-                    <div id="rocresult" style="height: 320px" class="shiny-plot-output" >validate</div>
+                </div>          
+                    <!-- <div id="rocresult" style="height: 320px" class="shiny-plot-output" >validate</div> -->
                 </div>  
                 <div style="height: 100px; margin-top: 10px">                  
                     <div style="float: left; border-right-style: solid; border-right-width: thin; width: 50%;"><b>Training performance: </b>
