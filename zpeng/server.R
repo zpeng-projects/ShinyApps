@@ -1,7 +1,4 @@
 library(shiny)
-library(Rcpp)
-
-
 
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
@@ -23,6 +20,7 @@ shinyServer(function(input, output) {
   # twitter functions
   data <- reactive({    
     library(twitteR)
+    library(Rcpp)
     setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
     tweets<-searchTwitter({input$tw_query}, n={input$tw_number}*1.2,lang="en")
     tw_df<-do.call("rbind", lapply(tweets, as.data.frame))     
