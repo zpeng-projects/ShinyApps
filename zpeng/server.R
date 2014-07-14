@@ -1,18 +1,6 @@
 library(shiny)
 library(Rcpp)
-library(quantmod)
-library(TTR)
-library(MASS)
-library(class)
-library(ROCR)
-library(pROC)
-library(Deducer)
-library(ggplot2)
-library(tree)
-library(randomForest)
-library(caret)
-library(e1071)
-library(kernlab)
+
 
 
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
@@ -90,11 +78,6 @@ shinyServer(function(input, output) {
     b<-list(ax,sen,ord,a[[2]],a[[3]])
   })
  
-  rec_data <- reactive({ 
-   a<-dat<-process_data()
-   
-  })
-   
   
   output$plot <- renderPlot({ 
     dat<-process_data()
@@ -130,7 +113,9 @@ shinyServer(function(input, output) {
 })
    
   # stock 
-  stock_dat <- reactive({    
+  stock_dat <- reactive({   
+    library(quantmod)
+    library(TTR)  
   stock = getSymbols({input$stock_name}, from={input$start_date},
                      to={input$end_date},src="yahoo", auto.assign=F) }) 
 
@@ -197,7 +182,17 @@ df<-df[m:j,]
 })  
 
   model_do<-reactive({
-  
+    library(MASS)
+    library(class)
+    library(ROCR)
+    library(pROC)
+    library(Deducer)
+    library(ggplot2)
+    library(tree)
+    library(randomForest)
+    library(caret)
+    library(e1071)
+    library(kernlab)
   dat<-model_dat()
   n<-nrow(dat)
   m<-ncol(dat)
