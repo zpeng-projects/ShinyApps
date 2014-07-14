@@ -4,6 +4,23 @@ api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
 access_token <- "2534082073-qlC6nlEgvmHb1zzJCqDhZhtIqIAYgZZBDJcOVra"
 access_token_secret <- "GSdNj3Clasqm4Ub5Nl647y8cuafphvPi5NpcHkdasFk0p"
 
+library(twitteR)
+library(tm)
+library(SnowballC) 
+library(quantmod)
+library(TTR)  
+library(MASS)
+library(class)
+library(ROCR)
+library(pROC)
+#library(Deducer)
+library(ggplot2)
+library(tree)
+library(randomForest)
+library(caret)
+library(e1071)
+library(kernlab)
+
 func_removeNonAscii<-function(x) {
   dat2 <- unlist(strsplit(x, split=" "))
   dat3 <- grepl("dat2", iconv(dat2, "latin1", "ASCII", sub="dat2"))
@@ -16,14 +33,10 @@ hu.liu.neg<-scan("negative-words.txt", what="character", comment.char=";")
 shinyServer(function(input, output) {
   
   # twitter functions
-  data <- reactive({    
-    library(ROAuth)
-    library(RCurl)
-    library(Rcpp)
-    library(bitops)
-    library(digest)
-    library(rjson)
-    library(twitteR)
+  data <- reactive({  
+    #do not install twitteR, only do install_github("twitteR", username="geoffjentry")
+    #some error, ctrl-c interupt
+    
     
     
    
@@ -33,8 +46,7 @@ shinyServer(function(input, output) {
   
   
   prep_data <- reactive({ 
-    library(tm)
-    library(SnowballC) 
+    
     tw_df<-data()
     raw_tweet<-tw_df$text
     tw_df$text<-sapply(tw_df$text,func_removeNonAscii)    
@@ -118,8 +130,7 @@ shinyServer(function(input, output) {
    
   # stock 
   stock_dat <- reactive({   
-    library(quantmod)
-    library(TTR)  
+   
   stock = getSymbols({input$stock_name}, from={input$start_date},
                      to={input$end_date},src="yahoo", auto.assign=F) }) 
 
@@ -186,17 +197,7 @@ df<-df[m:j,]
 })  
 
   model_do<-reactive({
-    library(MASS)
-    library(class)
-    library(ROCR)
-    library(pROC)
-    library(Deducer)
-    library(ggplot2)
-    library(tree)
-    library(randomForest)
-    library(caret)
-    library(e1071)
-    library(kernlab)
+    
   dat<-model_dat()
   n<-nrow(dat)
   m<-ncol(dat)
