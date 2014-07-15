@@ -67,13 +67,13 @@ str(raw_data)</code></pre>
 ##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
 ##  $ date    : Factor w/ 61 levels &quot;2012-10-01&quot;,&quot;2012-10-02&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...</code></pre>
-<p>Note that there are 3 columns in the dataset: steps(int), date(factor), and interval(int). The data type of column “date”&quot; needs to be coverted to type of date:</p>
+<p>Note that there are 3 columns in the dataset: steps(int), date(factor), and interval(int). The data type of column “date”&quot; needs to be converted to type of date:</p>
 <pre class="r"><code>raw_data$date &lt;- as.Date(raw_data$date)</code></pre>
 <p>There is a lot of missing data, which will be filled in with the averaged value in the same time interval later.</p>
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level3">
 <h3>What is mean total number of steps taken per day?</h3>
-<p>As a first step, a histogram of the total numberof steps taken in each day is plotted:</p>
+<p>As a first step, a histogram of the total number of steps taken in each day is plotted:</p>
 <pre class="r"><code>tmp &lt;- split(raw_data$steps,raw_data$date)
 steps_each_day &lt;- sapply(tmp,sum,na.rm=TRUE)
 hist(steps_each_day, breaks=20, xlab=&quot;Total Steps per Day&quot;,
