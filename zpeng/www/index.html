@@ -55,9 +55,9 @@
       <div id="projlist" style="width: 900px; margin-top: 10px;" align="left"> 
         <table style="width: 65%; font-size: x-small; font-weight: bold;">
                  <tr>
-                     <td align="center">
+                     <!--<td align="center">
                          <button id="proj_sum" class="myButton">Summary</button>
-                     </td>
+                     </td> -->
                      <td align="center">
                          <button id="proj_sto" class="myButton">Stock Analysis</button>
                      </td>
@@ -66,8 +66,12 @@
                      </td>
                      <td>
                          <button id="proj_wea" class="myButton":>Wearable Data</button></td>
+                         <td>
+                         <button id="proj_dmg" class="myButton":>Weather Data</button></td>
                      <td>
                          <button id="proj_the" class="myButton":>Thermal model</button></td>
+                  
+                         
                      <!--<td>
                          <button id="proj_b6" class="myButton":>Force Sensor</button></td> -->
                  </tr>                                  
@@ -81,56 +85,64 @@
         
         <script type="text/javascript">
             $(document).ready(function () {
-                $('#proj_sum').click(function () {
-                    $('#main_3').load('proj_summary.html');
-                    document.getElementById("proj_sum").className = "buttonsel";
+                  $('#proj_dmg').click(function () {
+                    $('#main_3').load('pa2.html');                    
                     document.getElementById("proj_sto").className = "mybutton";
                     document.getElementById("proj_twi").className = "mybutton";
                     document.getElementById("proj_wea").className = "mybutton";
-                    document.getElementById("proj_the").className = "mybutton";                    
+                    document.getElementById("proj_the").className = "mybutton";
+                    document.getElementById("proj_dmg").className = "buttonsel";
+                   
+                                      
 
                 });
                 $('#proj_sto').click(function () {
                     $('#main_3').load('proj_stock.html');
-                    document.getElementById("proj_sum").className = "mybutton";
                     document.getElementById("proj_sto").className = "buttonsel";
                     document.getElementById("proj_twi").className = "mybutton";
                     document.getElementById("proj_wea").className = "mybutton";
                     document.getElementById("proj_the").className = "mybutton";
+                    document.getElementById("proj_dmg").className = "mybutton";
+                   
                 });
                 $('#proj_twi').click(function () {
-                    $('#main_3').load('proj_centi.html');
-                    document.getElementById("proj_sum").className = "mybutton";
+                    $('#main_3').load('proj_centi.html');                    
                     document.getElementById("proj_sto").className = "mybutton";
                     document.getElementById("proj_twi").className = "buttonsel";
                     document.getElementById("proj_wea").className = "mybutton";
                     document.getElementById("proj_the").className = "mybutton";
+                    document.getElementById("proj_dmg").className = "mybutton";
+                   
                 });
 
                 $('#proj_wea').click(function () {
-                    $('#main_3').load('pa1.html');
-                    document.getElementById("proj_sum").className = "mybutton";
+                    $('#main_3').load('pa1.html');                    
                     document.getElementById("proj_sto").className = "mybutton";
                     document.getElementById("proj_twi").className = "mybutton";
                     document.getElementById("proj_wea").className = "buttonsel";
-                    document.getElementById("proj_the").className = "mybutton";     
+                    document.getElementById("proj_the").className = "mybutton"; 
+                    document.getElementById("proj_dmg").className = "mybutton";
+                   
+                        
                 });
                 $('#proj_the').click(function () {
                     $('#main_3').load('proj_FEA.html');
-                    document.getElementById("proj_sum").className = "mybutton";
                     document.getElementById("proj_sto").className = "mybutton";
                     document.getElementById("proj_twi").className = "mybutton";
                     document.getElementById("proj_wea").className = "mybutton";
-                    document.getElementById("proj_the").className = "buttonsel";     
+                    document.getElementById("proj_the").className = "buttonsel"; 
+                    document.getElementById("proj_dmg").className = "mybutton";
+                    
                 });
             });
              $(document).ready(function () {
                  $('#main_3').load('proj_stock.html');
-                 document.getElementById("proj_sum").className = "mybutton";
                  document.getElementById("proj_sto").className = "buttonsel";
                  document.getElementById("proj_twi").className = "mybutton";
                  document.getElementById("proj_wea").className = "mybutton";
                  document.getElementById("proj_the").className = "mybutton";
+                 document.getElementById("proj_dmg").className = "mybutton";
+                
                 });
            
 		        </script>     			         
