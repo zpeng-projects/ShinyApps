@@ -66,7 +66,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.</p>
 <p>We keep only the relevent features for this study, which are: * EVTYPE: event type * FATALITIES * INJURIES * PROPDMG: property damage * PROPDMGEXP: unit of property damage * CROPDMG: crop damage * CROPDMGEXP: unit of crop damage</p>
 <pre class="r"><code>new_data &lt;- raw_data[,c(&quot;EVTYPE&quot;,&quot;FATALITIES&quot;,&quot;INJURIES&quot;,&quot;PROPDMG&quot;,&quot;PROPDMGEXP&quot;,&quot;CROPDMG&quot;,&quot;CROPDMGEXP&quot;)]</code></pre>
-<p>The total number of of the event types is 985. We need to classify them into groups. Acording to National Weather Service Storm Data Documentation (<a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>), there are 48 events as listed below:</p>
+<p>The total number of of the event types is 985. We need to classify them into groups. According to National Weather Service Storm Data Documentation (<a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>), there are 48 events as listed below:</p>
 <pre><code>##  [1] &quot;astronomical low tide&quot;    &quot;avalanche&quot;               
 ##  [3] &quot;blizzard&quot;                 &quot;coastal flood&quot;           
 ##  [5] &quot;cold/wind chill&quot;          &quot;debris flow&quot;             
@@ -91,7 +91,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 ## [43] &quot;tsunami&quot;                  &quot;volcanic ash&quot;            
 ## [45] &quot;waterspout&quot;               &quot;wildfire&quot;                
 ## [47] &quot;winter storm&quot;             &quot;winter weather&quot;</code></pre>
-<p>We need clean up the data of event types, and divide them into the 48 groups as listed above. First we convert all type names to lowercase, and remove the spaces and “&amp;”,“/”,“-” and numbers in the names using regular expression:</p>
+<p>We need clean up the data of event types, and divide them into the 48 groups as listed above. First we convert all type names to lower case, and remove the spaces and “&amp;”,“/”,“-” and numbers in the names using regular expression:</p>
 <pre class="r"><code>new_data$EVTYPE=tolower(as.character(new_data$EVTYPE))
 new_data$EVTYPE=gsub(&quot;\\s+|/|-|\\+|&amp;|and|[0-9]+&quot;,&quot;&quot;,new_data$EVTYPE)
 tmp&lt;-as.character(levels(factor(new_data$EVTYPE)))</code></pre>
