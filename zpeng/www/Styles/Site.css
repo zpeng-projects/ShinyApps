@@ -15,7 +15,7 @@
        
 }
 .buttonsel
-{   padding:5px
+{   padding:5px;
     font-family: 'Comic Sans MS';
     font-weight: bold;
     color: #003366;
@@ -34,7 +34,7 @@
 }
 .myButton
 {
-    padding:5px    
+    padding:5px ;   
     font-family: 'Comic Sans MS';
     font-weight: bold;
     color: #FFFFFF;

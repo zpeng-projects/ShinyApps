@@ -3,13 +3,12 @@
  <h2 style="font-family: Arial, Helvetica, sans-serif; color: #3366CC"> Twitter Sentiment Analysis</h2>
  <p><b>Introduction</b> This is part of a project I am working on: to build a platform which allows users to analyse the data of their interest,
   and to build their own predictive model.</p>
-  <p>User can enter the twitter query and total number of tweets they want to get. This web application uses Twitter API to retrive the tweets, and 
+  <p>Users can enter the twitter query and total number of tweets they want to get. This web application uses Twitter API to retrive the tweets, and 
   clean up the data (filter out R-rated tweets, and remove numbers, symbols, stopwords, and stemming). After that it counts 
   the number of positive words (N_pos) and negative works (N_neg) for each tweet. The sentiment of the query at anytime is a calcualted as 
   the average of (N_pos-N_neg)
-  of 100 tweets closest to that time. Note that the time scale in the plot can vary greatly depending on the popularity of the query.</p>
-  <p><b>Tools used:</b> R, shiny, text minging(tm), twitter search (twitteR), html,javascript, so on. This page is hosted on a Amazon ec2 
-  instance (t1.micro). Shiny serve is installed and configured on the ec2 instance by me.</p>
+  of 100 tweets closest to that time (sliding window). Note that the time scale in the plot can vary greatly depending on the popularity of the query.</p>
+  <p>This page is hosted on a Amazon ec2 instance (t1.micro).</p>
    
 
  <hr />
