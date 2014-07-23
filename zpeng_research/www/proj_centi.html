@@ -1,0 +1,74 @@
+ <script src="shared/shiny.js" type="text/javascript"></script> 
+ 
+ <h2 style="font-family: Arial, Helvetica, sans-serif; color: #3366CC"> Twitter Sentiment Analysis</h2>
+ <p><b>Introduction</b> This is part of a project I am working on: to build a platform which allows users to analyse the data of their interest,
+  and to build their own predictive model.</p>
+  <p>Users can enter the twitter query and total number of tweets they want to get. This web application uses Twitter API to retrive the tweets, and 
+  clean up the data (filter out R-rated tweets, and remove numbers, symbols, stopwords, and stemming). After that it counts 
+  the number of positive words (N_pos) and negative works (N_neg) for each tweet. The sentiment of the query at anytime is a calcualted as 
+  the average of (N_pos-N_neg)
+  of 100 tweets closest to that time (sliding window). Note that the time scale in the plot can vary greatly depending on the popularity of the query.</p>
+    
+
+ <hr />
+
+  <table align="center" style="width: 100%" cellspacing="20px">
+    <tr align="left">
+        <td style="width: 30%; border-right-style: solid; border-right-width: thin;" valign="top">
+        <div>
+        <form>
+            <p><label>Type in you twitter query:</label><br />
+            <input type="text" name="tw_query" value="tesla"/></p>    
+            <p><label>Number of tweets:</label><br /> 
+            <input type="number" name="tw_number" value=250 min=1 max="10000",step=1 /></p>   
+            <input id="sub1" class="submit1" type="submit" value="submit" />       
+        </form>
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#sub1').click(function () {
+                        $('#plot').load('empty.html');
+                    });  
+                });
+	    </script> 
+        </td>
+        <td style="width: 70%">
+            <div> 
+            <div id="plot" class="shiny-plot-output" 
+            style="height: 400px"><h3 style="color: #003399">searching tweets now... (it may take 1 min to get 250 tweets)</h3></div> 
+        </div>
+           
+          </td>
+    </tr>
+  </table>
+  <hr />
+  <p><h3 align="center" style="font-family: Arial, Helvetica, sans-serif; color: #3366CC">Read the tweets:</h3></p>
+  <div>
+        <table align="center" style="width: 100% " cellspacing="20px">
+            <tr align="left" valign="top" style="border-top-style: solid; border-top-width: thin;">
+                <td style="width: 30%" >
+                <form id="firstF" style="margin-top: 30px">
+                    <p><label>Number of tweets to read:</label><br /> 
+                        <input type="number" name="tw_Read" value=5 min=1 step=1/></p>
+                    <p><label>Sorting the tweets:</label><br /> 
+                        <select name="dat_order">
+                            <option value="desc">start from most positive</option>
+                            <option value="asc">start from most negative</option>
+                            <option value="time">start from most recent</option>      
+                        </select> 
+                    </p> 
+                    <p><label>raw/processed tweets:</label><br /> 
+                        <select name="tw_type">
+                            <option value="rawtw">raw tweets</option>
+                            <option value="preptw">processed(remove stop words,stemming...)</option>                                  
+                        </select> 
+                    </p> 
+                 <input class="submit1" type="submit" value="submit" />
+                 </form> 
+                 </td>
+                <td style="width: 70%;">  
+                     <div id="table" class="shiny-html-output" style="text-align: left; line-height: 10px"></div>                     
+                </td>
+            </tr>
+        </table>
+   </div>
+  <hr />
