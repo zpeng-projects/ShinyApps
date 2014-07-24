@@ -383,7 +383,12 @@ output$testControls <- renderUI({
 
 output$summ1 <- renderPrint({
   dat<-model_do()[[3]] 
-  summary(dat)
+  if({input$model}=="logireg"){summary(dat)}
+  else if({input$model}=="tree"){summary(dat)}
+  else if({input$model}=="knn"){summary(dat)}
+  else if({input$model}=="rf"){summary(dat)}
+  else {dat}
+  
 })
   
     output$resultTrain <- renderPrint({
