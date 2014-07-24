@@ -6,15 +6,10 @@ library(quantmod)
 library(TTR)  
 library(MASS)
 library(class)
-#library(ROCR)
-#library(pROC)
-#library(Deducer)
 library(ggplot2)
 library(tree)
 library(randomForest)
-# library(caret)
 library(e1071)
-#library(kernlab)  
 api_key <- "HJB9l39OhH7XKqr6deYHROft6"
 api_secret <- "l4ZyUExemzqPnEeD5qtw5aHuuN8oSMCOe7pNSNaE7lTVHzuGYI"
 access_token <- "2534082073-qlC6nlEgvmHb1zzJCqDhZhtIqIAYgZZBDJcOVra"
@@ -278,7 +273,7 @@ df<-df[m:j,]
    
     set.seed(1234)
     fit <- randomForest(updown ~ . ,data =training, mtry ={input$n_sub},ntree ={input$ntree})    
-    probs = predict(fit)
+    probs = predict(fit,training)
     pred =probs        
     train_pred<-table(pred, training$updown)
     
@@ -345,8 +340,8 @@ output$testControls <- renderUI({
   if({input$model}=="knn"){
     numericInput("N_knn", "K nearest neighbors:", value=1, min=1, step=1)}
   else if({input$model}=="rf"){       
-    c(numericInput("n_sub", "number of subset of variables:", 2),
-      numericInput("ntree", "number of trees:", 500))}  
+    c(numericInput("n_sub", "number of subset of variables:", value=2),
+      numericInput("ntree", "number of trees:", value=500))}  
   else if({input$model}=="svm"){
         list(selectInput("scale", "scale data?",choices = c(FALSE,TRUE)),
            numericInput("cost", "Cost:0.01-10e5", value=1))}
@@ -385,6 +380,11 @@ output$testControls <- renderUI({
         dat<-model_do()[[1]]         
         dat } 
       })
+
+output$summ1 <- renderPrint({
+  dat<-model_do()[[3]] 
+  summary(dat)
+})
   
     output$resultTrain <- renderPrint({
       if({input$model}!="knn")
