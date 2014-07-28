@@ -174,7 +174,8 @@ df$updown<-tmp
 m<-m+1
 j<-n-1
 df$updown<-ifelse(df$updown>0,"up","down")
-df<-df[m:j,]    
+df<-df[m:j,]   
+df <- na.omit(df) 
 })
 
   output$plot1 <- renderPlot({
