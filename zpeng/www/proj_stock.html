@@ -1,0 +1,91 @@
+ <script src="shared/shiny.js" type="text/javascript"></script>   
+  <h2>Stock Price Analysis</h2>
+  <p><b>Introduction</b> This is part of a project I am working on: to build a platform which allows users to analyse the data of their interest,
+  and to build their own predictive models.</p>
+  <p>Here users can download historical stock price data, do simple exploratory analysis, and then choose the predictor variables 
+  to build a classification model. The outcome of the model is the direction of the next-day stock price: up or down </p>
+  
+  <hr />
+    <p><h3 align="center">Exploratory analysis</h3></p>
+    <table align="center" style="width: 100%" cellspacing="20px">
+    <tr align="left">
+        <td style="width: 30%; border-right-style: solid; border-right-width: thin;" valign="top">
+           <div>
+            <p> <label><b>Enter Stock Symbol:</b></label><br /> 
+                <input type="text" name="stock_name" value="AAPL"/></p>
+            <p> <label><b>Enter Start date:</b></label><br /> 
+                <input type="text" name="start_date" value="2013-10-01"/></p>
+            <p> <label><b>Enter end date:</b></label><br /> 
+                <input type="text" name="end_date" value="2014-06-01"/></p>
+            <p> <label><b>Type of charts:</b></label><br /> 
+                <select name="cht">
+                     <option value="lchart">line chart</option>
+                     <option value="bchart">bar chart</option>
+                     <option value="cchart">candle chart</option>      
+                </select></p> 
+            </div>
+        </td>
+        <td style="width: 70%">
+          <div id="plot1" class="shiny-plot-output" 
+            style="width: 90%; height: 320px"> </div>  
+        </td>
+    </tr>
+    </table>
+    <hr />
+    <p><h3 align="center">Predictive model of the direction of the stock price:</h3></p>
+    <div>
+    <table align="center" style="width: 100% " cellspacing="20px">
+        <tr align="left" >
+            <td style="width:35%; border-right-style: solid; border-right-width: thin;" valign="top">            
+                <b>Outcome</b>: Next-day price up/down
+                <form id="model_sel" style="text-align: left"><b>Choose predictors:</b><br />
+                    <input type="checkbox" name="vol" value="vol" checked>Volume change<br />
+                    <input type="checkbox" name="ret" value="ret" checked>Stock Return<br />
+                    <input type="checkbox" name="ret1" value="ret1" checked>Return 1-day ago<br />
+                    <input type="checkbox" name="ret2" value="ret2">Return 2-day ago<br />
+                    <input type="checkbox" name="ret3" value="ret3">Return 3-day ago<br />
+                    <input type="checkbox" name="ret4" value="ret4">Return 4-day ago<br />
+                    <input type="checkbox" name="retSP" value="retSP" checked>Return of S&P index<br />
+                    <input type="checkbox" name="retNA" value="retNA">Return of Nasdaq index<br />
+                </form>  
+                <label><b>Split data into training / testing datasets:</b></label><br />
+                     <input type="number" name="sampleR" max=1 min=0 step=0.01 value="0.7"/> training data<br />
+                <label><b>Select model:</b></label><br /> 
+                    <select name="model">                    
+                    <option value="logireg">Logistic regression</option>  
+                    <option value="lda">Linear Discriminant Analysis(LDA)</option>
+                    <option value="qda">Quadratic Discriminant Analysis(QDA)</option>
+                    <option value="knn">K-Nearest Neighbors (KNN) </option>
+                    <option value="tree">Clasification Tree </option>    
+                    <option value="rf">Random Forest </option>  
+                    <!--<option value="svm">SVM -linear kernel (slow)</option>  
+                    <option value="svm_poly">SVM -Polynomial kernel (slow)</option>  
+                    <option value="svm_rad">SVM -radial kernel (slow)</option>    -->                  
+                </select>   
+                <div align="left" style="width: 200px; border-right-style: groove; border-bottom-style: groove; 
+                    border-left-style: groove;"><div id="testControls" class="shiny-html-output" align="left"></div>
+                </div> 
+            </td>
+            <td style="width: 70%" valign="top">             
+                <div style="border-bottom-style: solid; border-bottom-width: thin; clear: both;">
+                    <h3>Model Performance:</h3>
+                    <pre id="summ1" class="shiny-text-output" style="color: #3366CC;"></pre>          
+                    <!-- <div id="rocresult" style="height: 320px" class="shiny-plot-output" >validate</div> -->
+                </div>  
+                <div style="height: 100px; margin-top: 10px">                  
+                    <div style="float: left; border-right-style: solid; border-right-width: thin; width: 50%;"><b>Training performance: </b>
+                        <div id="ConfusionTrain" class="shiny-html-output">training</div>
+                        <div id="resultTrain" class="shiny-text-output" style="color: green">training</div>
+                    </div>       
+                    <div style="float: right; "><b>Model validation (test dataset):</b> 
+                        <div id="ConfusionTest" class="shiny-html-output">validate</div>  
+                        <div id="resultTest" class="shiny-text-output" style="color: green">validate</div>
+                    </div>
+                </div>
+         </td>        
+        </tr>
+    </table>
+    </div>
+    
+    <hr /> 
+    
